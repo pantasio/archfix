@@ -181,11 +181,11 @@ function install_base() {
 
   #Set locales
   #Steam workaround
-  if [ $LANGUAGE -ne "en_US" ]
+  if [ $LANGUAGE = "en_US" ]
   then
-    echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
+    "OK!"
   else
-    echo ''
+    echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   fi
   
   arch-chroot /mnt/ locale-gen
