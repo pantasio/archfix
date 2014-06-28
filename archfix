@@ -183,7 +183,7 @@ function install_base() {
   #Steam workaround
   if [ $LANGUAGE = "en_US" ]
   then
-    "OK!"
+    echo "OK!"
   else
     echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   fi
