@@ -170,26 +170,28 @@ function partitioning() {
 function install_base() {
   pacstrap /mnt base base-devel networkmanager sudo wpa_supplicant grub os-prober
   genfstab -p /mnt > /mnt/etc/fstab
-  arch-chroot /mnt/ echo $HOSTNAME > /etc/hostname
-  arch-chroot /mnt/ echo $LANGUAGE'.UTF-8' > /etc/locale.conf
-  arch-chroot /mnt/ echo LC_COLLATE=C >> /etc/locale.conf
-  arch-chroot /mnt/ echo KEYMAP=$KEYMAP > /etc/vconsole.conf
-  arch-chroot /mnt/ ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-  arch-chroot /mnt/ rm -rf /etc/locale.gen
-  arch-chroot /mnt/ touch /etc/locale.gen
-  arch-chroot /mnt/ echo $LANGUAGE'.UTF-8 UTF-8' >> /etc/locale.gen
-  arch-chroot /mnt/ systemctl enable NetworkManager.service
+  echo $HOSTNAME > /mnt/etc/hostname
+  echo $LANGUAGE'.UTF-8' > /mnt/etc/locale.conf
+  echo 'LC_COLLATE=C' >> /mnt/etc/locale.conf
+  echo 'KEYMAP='$KEYMAP > /mnt/etc/vconsole.conf
+  arch-chroot /mnt ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime
+  arch-chroot /mnt rm -rf /etc/locale.gen
+  arch-chroot /mnt touch /etc/locale.gen
+  echo $LANGUAGE'.UTF-8 UTF-8' > /mnt/etc/locale.gen
 
   #Set locales
   #Steam workaround
   if [ "$LANGUAGE" -ne "en_US" ]
   then
-    arch-chroot /mnt/ echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen
+    echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   else
     echo ''
   fi
   
   arch-chroot /mnt/ locale-gen
+
+  #enable NetworkManager
+  arch-chroot /mnt systemctl enable NetworkManager.service
   
   #enable mutilib
   MULTILIB=''
@@ -198,21 +200,20 @@ function install_base() {
     arch-chroot /mnt/ local MULTILIB=`grep -n "\[multilib\]" /etc/pacman.conf | cut -f1 -d:`
     if [ -z $MULTILIB ]
     then
-      arch-chroot /mnt/ echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
-      arch-chroot /mnt/ echo -e '\nMultilib repository added into pacman.conf file'
+      echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
     else
-      arch-chroot /mnt/ sed -i "${MULTILIB}s/^#//" /etc/pacman.conf
-      arch-chroot /mnt/ local MULTILIB=$(( $MULTILIB + 1 ))
-      arch-chroot /mnt/ sed -i "${MULTILIB}s/^#//" /etc/pacman.conf
+      sed -i "${MULTILIB}s/^#//" /mnt/etc/pacman.conf
+      local MULTILIB=$(( $MULTILIB + 1 ))
+      sed -i "${MULTILIB}s/^#//" /mnt/etc/pacman.conf
     fi
   fi
   
   arch-chroot /mnt/ pacman -Syy
   
   #Enable Grub
-  arch-chroot /boot/grub/grub.cfg >> ""
-  arch-chroot /boot/grub/grub.cfg >> "# fix broken grub.cfg gen"
-  arch-chroot /boot/grub/grub.cfg >> "GRUB_DISABLE_SUBMENU=y"
+  echo "" >> /mnt/boot/grub/grub.cfg
+  echo "# fix broken grub.cfg gen" >> /boot/grub/grub.cfg
+  echo "GRUB_DISABLE_SUBMENU=y" >> /boot/grub/grub.cfg
   arch-chroot /mnt/ grub-mkconfig -o /boot/grub/grub.cfg
   arch-chroot grub-install $HDD_NAME
   
