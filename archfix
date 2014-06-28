@@ -196,7 +196,7 @@ function install_base() {
   #enable mutilib
   MULTILIB=''
   ARCH=$(uname -m)
-  if [ $ARCH -eq "x86_64" ]
+  if [ $ARCH = "x86_64" ]
   then
    MULTILIB=`grep -n "\[multilib\]" /mnt/etc/pacman.conf | cut -f1 -d:`
     if [ -z $MULTILIB ]
@@ -211,19 +211,20 @@ function install_base() {
   
   arch-chroot /mnt/ pacman -Syy
   
+  #create Linux Kernel
+  arch-chroot /mnt/ mkinitcpio -p linux
+
   #Enable Grub
   arch-chroot /mnt pacman --noconfirm -S grub
   echo "" >> /mnt/etc/default/grub
   echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
   echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
-  arch-chroot /mnt/ grub-mkconfig -o /etc/default/grub
-  arch-chroot grub-install $HDD_NAME
+  arch-chroot /mnt grub-mkconfig -o /etc/default/grub
+  arch-chroot /mnt grub-install $HDD_NAME
   
-  #create Linux Kernel
-  arch-chroot /mnt/ mkinitcpio -p linux
   
   #SET Root password
-  arch-chroot /mnt/ passwd
+  arch-chroot /mnt passwd
   
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
