@@ -137,6 +137,9 @@ function partitioning() {
   ROOT_SIZE=$(($ROOT_SIZE * 1024))
   HOME_SIZE=$(($HOME_SIZE * 1024))
   SWAP_SIZE=$(($SWAP_SIZE * 1024))
+
+  #Wiping the entire disk
+  dd if=/dev/zero of=$HDD_NAME bs=1M
   
   touch /tmp/fdisk.input
   echo -e "n\np\n1\n\n+"$BOOT_SIZE"K\na\n1\nn\np\n2\n\n+"$SWAP_SIZE"K\nt\n2\n82\nn\np\n3\n\n+"$ROOT_SIZE"K\nn\np\n4\n\n+"$HOME_SIZE"K\nn\np\n5\n\nw" > /tmp/fdisk.input
@@ -166,7 +169,6 @@ function partitioning() {
 
 function install_base() {
   pacstrap /mnt base base-devel networkmanager sudo wpa_supplicant grub os-prober
-  systemctl enable NetworkManager.service
   genfstab -p /mnt > /mnt/etc/fstab
   arch-chroot /mnt/ echo $HOSTNAME > /etc/hostname
   arch-chroot /mnt/ echo $LANGUAGE'.UTF-8' > /etc/locale.conf
@@ -176,7 +178,8 @@ function install_base() {
   arch-chroot /mnt/ rm -rf /etc/locale.gen
   arch-chroot /mnt/ touch /etc/locale.gen
   arch-chroot /mnt/ echo $LANGUAGE'.UTF-8 UTF-8' >> /etc/locale.gen
-  
+  arch-chroot /mnt/ systemctl enable NetworkManager.service
+
   #Set locales
   #Steam workaround
   if [ "$LANGUAGE" -ne "en_US" ]
