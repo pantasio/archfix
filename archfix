@@ -211,9 +211,6 @@ function install_base() {
   
   arch-chroot /mnt/ pacman -Syy
   
-  #create Linux Kernel
-  arch-chroot /mnt/ mkinitcpio -p linux
-
   #Enable Grub
   arch-chroot /mnt pacman --noconfirm -S grub
   echo "" >> /mnt/etc/default/grub
@@ -221,7 +218,9 @@ function install_base() {
   echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
   arch-chroot /mnt grub-mkconfig -o /etc/default/grub
   arch-chroot /mnt grub-install $HDD_NAME
-  
+
+  #create Linux Kernel
+  arch-chroot /mnt mkinitcpio -p linux
   
   #SET Root password
   arch-chroot /mnt passwd
