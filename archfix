@@ -142,14 +142,7 @@ function partitioning() {
   echo -e "n\np\n1\n\n+"$BOOT_SIZE"K\na\n1\nn\np\n2\n\n+"$SWAP_SIZE"K\nt\n2\n82\nn\np\n3\n\n+"$ROOT_SIZE"K\nn\np\n\n+"$HOME_SIZE"K\nn\np\n\nw" > /tmp/fdisk.input
   
   # Create Partitions
-  fdisk $1 < /tmp/fdisk.input 1&>2 > /dev/null
-  
-  # Check
-  if [ $? -eq 0 ] ; then
-    echo "Befehl wurde durchgeführt!"
-  else
-    echo "Fehler: $1 konnte nicht gefunden werden! "
-  fi
+  fdisk $HDD_NAME < /tmp/fdisk.input 1&>2 > /dev/null
   
   # Remove fdisk.input file
   rm /tmp/fdisk.input
