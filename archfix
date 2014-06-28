@@ -139,7 +139,7 @@ function partitioning() {
   SWAP_SIZE=$(($SWAP_SIZE * 1024))
   
   touch /tmp/fdisk.input
-  echo -e "n\np\n1\n\n+"$BOOT_SIZE"K\na\n1\nn\np\n2\n\n+"$SWAP_SIZE"K\nt\n2\n82\nn\np\n3\n\n+"$ROOT_SIZE"K\nn\np\n\n+"$HOME_SIZE"K\nn\np\n\nw" > /tmp/fdisk.input
+  echo -e "n\np\n1\n\n+"$BOOT_SIZE"K\na\n1\nn\np\n2\n\n+"$SWAP_SIZE"K\nt\n2\n82\nn\np\n3\n\n+"$ROOT_SIZE"K\nn\np\n4\n\n+"$HOME_SIZE"K\nn\np\n5\n\nw" > /tmp/fdisk.input
   
   # Create Partitions
   fdisk $HDD_NAME < /tmp/fdisk.input 1&>2 > /dev/null
