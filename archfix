@@ -174,9 +174,9 @@ function install_base() {
   echo $LANGUAGE'.UTF-8' > /mnt/etc/locale.conf
   echo 'LC_COLLATE=C' >> /mnt/etc/locale.conf
   echo 'KEYMAP='$KEYMAP > /mnt/etc/vconsole.conf
-  arch-chroot /mnt ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-  arch-chroot /mnt rm -rf /etc/locale.gen
-  arch-chroot /mnt touch /etc/locale.gen
+  arch-chroot /mnt "ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime"
+  arch-chroot /mnt "rm -rf /etc/locale.gen"
+  arch-chroot /mnt "touch /etc/locale.gen"
   echo $LANGUAGE'.UTF-8 UTF-8' > /mnt/etc/locale.gen
 
   #Set locales
@@ -188,10 +188,10 @@ function install_base() {
     echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   fi
   
-  arch-chroot /mnt/ locale-gen
+  arch-chroot /mnt "locale-gen"
 
   #enable NetworkManager
-  arch-chroot /mnt systemctl enable NetworkManager.service
+  arch-chroot /mnt "systemctl enable NetworkManager.service"
   
   #enable mutilib
   MULTILIB=''
@@ -209,21 +209,21 @@ function install_base() {
     fi
   fi
   
-  arch-chroot /mnt/ pacman -Syy
+  arch-chroot /mnt "pacman -Syy"
   
   #create Linux Kernel
-  arch-chroot /mnt mkinitcpio -p linux
+  arch-chroot /mnt "mkinitcpio -p linux"
 
   #Enable Grub
-  arch-chroot /mnt pacman --noconfirm -S grub
+  arch-chroot /mnt "pacman --noconfirm -S grub"
   echo "" >> /mnt/etc/default/grub
   echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
   echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
-  arch-chroot /mnt grub-install --target=i386-pc --recheck --debug ${HDD_NAME}
-  arch-chroot /mnt grub-mkconfig -o /etc/default/grub
+  arch-chroot /mnt "grub-install --target=i386-pc --recheck --debug ${HDD_NAME}"
+  arch-chroot /mnt "grub-mkconfig -o /etc/default/grub"
   
   #SET Root password
-  arch-chroot /mnt passwd
+  arch-chroot /mnt "passwd"
   
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
