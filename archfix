@@ -33,7 +33,7 @@ HOSTNAME='r2d2'
 LANGUAGE="de_DE"
 KEYMAP="de-latin1"
 TIMEZONE="Europe/Berlin"
-ARCH=`uname -m`
+ARCH=''
 
 message_print() {
   if [ "$1" = 1 ]
@@ -168,7 +168,7 @@ function partitioning() {
 }
 
 function install_base() {
-  pacstrap /mnt base base-devel networkmanager sudo wpa_supplicant grub os-prober
+  pacstrap /mnt base base-devel networkmanager sudo wpa_supplicant
   genfstab -p /mnt > /mnt/etc/fstab
   echo $HOSTNAME > /mnt/etc/hostname
   echo $LANGUAGE'.UTF-8' > /mnt/etc/locale.conf
@@ -181,7 +181,7 @@ function install_base() {
 
   #Set locales
   #Steam workaround
-  if [ "$LANGUAGE" -ne "en_US" ]
+  if [ $LANGUAGE -ne "en_US" ]
   then
     echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   else
@@ -195,9 +195,10 @@ function install_base() {
   
   #enable mutilib
   MULTILIB=''
-  if [ "$ARCH" -eq "x86_64" ]
+  ARCH=$(uname -m)
+  if [ $ARCH -eq "x86_64" ]
   then
-    arch-chroot /mnt/ local MULTILIB=`grep -n "\[multilib\]" /etc/pacman.conf | cut -f1 -d:`
+   MULTILIB=`grep -n "\[multilib\]" /mnt/etc/pacman.conf | cut -f1 -d:`
     if [ -z $MULTILIB ]
     then
       echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
@@ -211,10 +212,11 @@ function install_base() {
   arch-chroot /mnt/ pacman -Syy
   
   #Enable Grub
-  echo "" >> /mnt/boot/grub/grub.cfg
-  echo "# fix broken grub.cfg gen" >> /boot/grub/grub.cfg
-  echo "GRUB_DISABLE_SUBMENU=y" >> /boot/grub/grub.cfg
-  arch-chroot /mnt/ grub-mkconfig -o /boot/grub/grub.cfg
+  arch-chroot /mnt pacman --noconfirm -S grub
+  echo "" >> /mnt/etc/default/grub
+  echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
+  echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
+  arch-chroot /mnt/ grub-mkconfig -o /etc/default/grub
   arch-chroot grub-install $HDD_NAME
   
   #create Linux Kernel
