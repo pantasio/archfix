@@ -82,7 +82,8 @@ function choise_menu() {
 }
 
 function get_total_hdd_size() {
-  TOTAL_HDD_SIZE=$(df | grep '^'$1 | awk '{s+=$2} END {print s}')
+  TOTAL_HDD_SIZE=$(fdisk -l $1 |grep "Disk "$1":" | head -n 2 | tail -n 1 | cut -d " " -f 5)
+  TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE / 1024))
   #HDD SIZE IN MB
   TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE / 1024))
   return 0
