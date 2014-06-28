@@ -34,6 +34,7 @@ LANGUAGE="de_DE"
 KEYMAP="de-latin1"
 TIMEZONE="Europe/Berlin"
 ARCH=''
+ARCH_ROOT='/mnt'
 
 message_print() {
   if [ "$1" = 1 ]
@@ -113,6 +114,10 @@ function calc_optimal_patition_size() {
   HOME_SIZE=$(($TOTAL_HDD_SIZE - $ROOT_SIZE))
 }
 
+function arch_chroot() {
+  arch-chroot $ARCH_ROOT /bin/bash -c "${1}"
+}
+
 function partitioning() {
   calc_optimal_swap_size
   echo "On which drive you want to install Arch?"
@@ -174,9 +179,9 @@ function install_base() {
   echo $LANGUAGE'.UTF-8' > /mnt/etc/locale.conf
   echo 'LC_COLLATE=C' >> /mnt/etc/locale.conf
   echo 'KEYMAP='$KEYMAP > /mnt/etc/vconsole.conf
-  arch-chroot /mnt "ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime"
-  arch-chroot /mnt "rm -rf /etc/locale.gen"
-  arch-chroot /mnt "touch /etc/locale.gen"
+  arch_chroot 'ln -s /usr/share/zoneinfo/'$TIMEZONE' /etc/localtime'
+  arch_chroot 'rm -rf /etc/locale.gen'
+  arch_chroot 'touch /etc/locale.gen'
   echo $LANGUAGE'.UTF-8 UTF-8' > /mnt/etc/locale.gen
 
   #Set locales
@@ -188,10 +193,10 @@ function install_base() {
     echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   fi
   
-  arch-chroot /mnt "locale-gen"
+  arch_chroot 'locale-gen'
 
   #enable NetworkManager
-  arch-chroot /mnt "systemctl enable NetworkManager.service"
+  arch_chroot 'systemctl enable NetworkManager.service'
   
   #enable mutilib
   MULTILIB=''
@@ -209,21 +214,21 @@ function install_base() {
     fi
   fi
   
-  arch-chroot /mnt "pacman -Syy"
+  arch_chroot 'pacman -Syy'
   
   #create Linux Kernel
-  arch-chroot /mnt "mkinitcpio -p linux"
+  arch_chroot 'mkinitcpio -p linux'
 
   #Enable Grub
-  arch-chroot /mnt "pacman --noconfirm -S grub"
+  arch_chroot 'pacman --noconfirm -S grub'
   echo "" >> /mnt/etc/default/grub
   echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
   echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
-  arch-chroot /mnt "grub-install --target=i386-pc --recheck --debug ${HDD_NAME}"
-  arch-chroot /mnt "grub-mkconfig -o /etc/default/grub"
+  arch_chroot 'grub-install --target=i386-pc --recheck --debug '${HDD_NAME}
+  arch_chroot 'grub-mkconfig -o /etc/default/grub'
   
   #SET Root password
-  arch-chroot /mnt "passwd"
+  arch_chroot 'passwd'
   
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
