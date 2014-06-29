@@ -47,6 +47,7 @@ function message_print() {
   fi
   
   printf "\033[0;${color}m**$2**\033[m \n"
+  return 0
 }
 
 
@@ -112,10 +113,12 @@ function first_choise() {
    optimize_mirrorlist
    install_yaourt
    adduser
+   install_powerpill
   fi
 
   #clean
   CHOISE_ARRAY=''
+  return 0
 }
 
 function get_total_hdd_size() {
@@ -148,6 +151,7 @@ function calc_optimal_patition_size() {
   TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE - $BOOT_SIZE))
   ROOT_SIZE=$(($TOTAL_HDD_SIZE * 15 / 100))
   HOME_SIZE=$(($TOTAL_HDD_SIZE - $ROOT_SIZE))
+  return 0
 }
 
 function arch_chroot() {
@@ -208,6 +212,7 @@ function partitioning() {
 
   #clean
   CHOISE_ARRAY=''
+  return 0
 }
 
 function install_base() {
@@ -283,6 +288,7 @@ function install_base() {
   umount $HDD_NAME'4'
 
   reboot #<< end
+  return 0
 }
 
 function optimize_mirrorlist() {
@@ -308,6 +314,7 @@ function optimize_mirrorlist() {
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
 
   pacman -Syy
+  return 0
 }
 
 function install_yaourt() {
@@ -345,6 +352,7 @@ function install_yaourt() {
   rm -rf yaourt.tar.gz
 
   cd
+  return 0
 }
 
 function adduser() {
@@ -362,6 +370,17 @@ function adduser() {
   echo ""
   passwd $username
   echo ""
+}
+
+function install_powerpill() {
+  clear
+  echo "******************************************************"
+  echo "***************   Installing POWERPILL!   ***************"
+  echo "******************************************************"
+  echo ""
+  yaourt --asroot --noconfirm -S powerpill
+  powerpill -Syu
+  return 0
 }
 
 first_choise
