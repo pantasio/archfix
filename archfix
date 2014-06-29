@@ -84,6 +84,22 @@ function choise_menu() {
   return 0
 }
 
+#Thank to http://fitnr.com/showing-a-bash-spinner.html
+function spinner()
+{
+    local pid=$1
+    local delay=0.75
+    local spinstr='|/-\'
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
+    printf "    \b\b\b\b"
+}
+
 function first_choise() {
   clear
   echo "************************************************"
@@ -302,7 +318,6 @@ function optimize_mirrorlist() {
   message_print 0 "*******please wait, this will take a few minutes!*****"
   message_print 0 "******************************************************"
   echo ""
-  echo "working..."
 
   TFILE="/tmp/mirrorlist.tmp"
   CCODE=${LANGUAGE:3:2}
@@ -311,7 +326,9 @@ function optimize_mirrorlist() {
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
 
-  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
+  (rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist) &
+  echo "working..." spinner $!
+  
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
 
   pacman -Syy
@@ -399,7 +416,7 @@ function adduser() {
 function install_powerpill() {
   clear
   echo "******************************************************"
-  echo "***************   Installing POWERPILL!   ***************"
+  echo "***************  Installing POWERPILL! ***************"
   echo "******************************************************"
   echo ""
   install_package "yaourt" "powerpill"
