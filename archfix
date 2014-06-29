@@ -711,10 +711,9 @@ function install_video_driver() {
     pacman --noconfirm -Rdds ati-dri
    [[ -f /etc/modules-load.d/ati.conf ]] && rm /etc/modules-load.d/ati.conf
     if [[ ${ARCHI} == x86_64 ]]; then
-      is_package_installed "lib32-ati-dri" && pacman --noconfirm -Rdds lib32-ati-dri
+      pacman --noconfirm -Rdds lib32-ati-dri
     fi
     install_package "powerpill" "linux-headers"
-    # Add repository
     install_package "powerpill" "catalyst-total"
     aticonfig --initial --output=/etc/X11/xorg.conf.d/20-radeon.conf
     systemctl enable atieventsd
