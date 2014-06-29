@@ -378,7 +378,7 @@ function install_powerpill() {
   echo "***************   Installing POWERPILL!   ***************"
   echo "******************************************************"
   echo ""
-  yaourt --asroot --noconfirm -S powerpill
+  yaourt --noconfirm -S powerpill
   powerpill -Syu
   return 0
 }
