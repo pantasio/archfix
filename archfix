@@ -36,7 +36,7 @@ TIMEZONE="Europe/Berlin"
 ARCH=''
 ARCH_ROOT='/mnt'
 USERNAME=''
-PID=''
+PID=0
 
 function message_print() {
   if [ "$1" = 1 ]
@@ -110,14 +110,14 @@ function start_spinner() {
 function spinner()  {
   if [ $1 == "start" ];
   then
-   if [ $PID -eq "0" ];
+   if [ $PID -eq 0 ];
    then
    start_spinner&
    PID=$!
    fi
   elif [ $1 == "stop" ];
   then
-   if [ $PID -ne "0" ];
+   if [ $PID -ne 0 ];
    then
    stop_spinner
    fi
