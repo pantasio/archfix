@@ -326,8 +326,10 @@ function optimize_mirrorlist() {
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
 
-  (rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist) &
-  echo "working..." spinner $!
+  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist &
+  PID=$!
+  echo "working..." spinner $PID
+  wait $PID
   
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
 
