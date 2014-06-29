@@ -293,9 +293,8 @@ function optimize_mirrorlist() {
 
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
-  mv ${TFILE} /etc/pacman.d/mirrorlist
-  
-  rankmirrors -n 6 /etc/pacman.d/mirrorlist
+
+  rankmirrors -n 6 TFILE > /etc/pacman.d/mirrorlist
 
   pacman -Syy
 }
