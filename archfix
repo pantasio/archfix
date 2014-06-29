@@ -295,7 +295,7 @@ function optimize_mirrorlist() {
   sed -i 's/^#Server/Server/g' ${TFILE}
   mv ${TFILE} /etc/pacman.d/mirrorlist
   
-  rankmirrors /etc/pacman.d/mirrorlist
+  rankmirrors -n 6 /etc/pacman.d/mirrorlist
 
   pacman -Syy
 }
