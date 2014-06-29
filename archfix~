@@ -320,16 +320,19 @@ function optimize_mirrorlist() {
   CCODE=${LANGUAGE:3:2}
   URL="https://www.archlinux.org/mirrorlist/?country=${CCODE}&use_mirror_status=on"
 
+
+  echo -n "working.. "
+  spinner_start &
+  PID=$!
+
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
 
-  
-  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist &
-  PID=$!
-  spinner $PID
-  wait $PID
+  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
   
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
+  
+  spinner_stop $PID
 
   pacman -Syy
   return 0
