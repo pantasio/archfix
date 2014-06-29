@@ -291,7 +291,7 @@ function optimize_mirrorlist() {
   CCODE=${LANGUAGE:3:2}
   URL="https://www.archlinux.org/mirrorlist/?country=${CCODE}&use_mirror_status=on"
 
-  curl -so ${TFILE} ${url}
+  curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
   mv -i ${TFILE} /etc/pacman.d/mirrorlist
   
