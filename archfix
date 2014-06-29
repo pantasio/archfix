@@ -464,13 +464,13 @@ function install_yaourt() {
 function install_package() {
   case "$1" in
    "pacman")
-    pacman --noconfirm --needed -S ${$2}
+    pacman --noconfirm --needed -S ${2}
     ;;
    "yaourt")
-    su - ${USERNAME} -c ' yaourt --noconfirm -S '"$2"
+    su - ${USERNAME} -c ' yaourt --noconfirm -S '${2}
     ;;
     "powerpill")
-    powerpill --noconfirm --needed -S ${$2}
+    powerpill --noconfirm --needed -S ${2}
     ;;
    *)
     echo ''
