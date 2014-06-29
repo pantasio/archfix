@@ -285,8 +285,15 @@ function install_base() {
 
 function optimize_mirrorlist() {
   clear
+  echo "******************************************************"
   echo "*************** optimizing mirrorlist! ***************"
-  message_print 0 "*************** please wait, this will take a few minutes!... ***************"
+  echo "******************************************************"
+  echo ""
+  message_print 0 "******************************************************"
+  message_print 0 "*******please wait, this will take a few minutes!*****"
+  message_print 0 "******************************************************"
+  echo ""
+  echo "working..."
 
   TFILE="/tmp/mirrorlist.tmp"
   CCODE=${LANGUAGE:3:2}
@@ -296,7 +303,7 @@ function optimize_mirrorlist() {
   sed -i 's/^#Server/Server/g' ${TFILE}
 
   rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
-  sed '/^#/ d' /etc/pacman.d/mirrorlist
+  sed -i '/^#/ d' /etc/pacman.d/mirrorlist
 
   pacman -Syy
 }
