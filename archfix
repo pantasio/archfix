@@ -83,6 +83,7 @@ function choise_menu() {
 }
 
 function first_choise() {
+  clear
   echo "************************************************"
   echo "************************************************"
   echo "*********                             **********"
@@ -100,8 +101,8 @@ function first_choise() {
 
   echo ""
   echo "Whitch Step you want to execute now"
-  CHOISE_ARRAY[0]="[1] The first part partitioned your hard drive and install the base system"
-  CHOISE_ARRAY[1]="[2] The second part install all packages (xfce,cups,lightdm...) you need to have a good desktop experience"
+  CHOISE_ARRAY[0]="The first part partitioned your hard drive and install the base system"
+  CHOISE_ARRAY[1]="The second part install all packages (xfce,cups,lightdm...) you need to have a good desktop experience"
   choise_menu
   if [ $RESULT -eq 1 ]
   then
@@ -284,9 +285,9 @@ function install_base() {
 
 function optimize_mirrorlist() {
   echo "optimizing mirrorlist!"
-  cd /etc/pacman.d/
-  cp mirrorlist mirrorlist.bak
-  rankmirrors -n 6 mirrorlist.backup > mirrorlist
+  cat /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist.old | grep '\.'${LANGUAGE:0:2}  | sed 's/#//g' > /etc/pacman.d/mirrorlist
+  rm -rf /etc/pacman.d/mirrorlist.old
+  rankmirrors /etc/pacman.d/mirrorlist
   pacman -Syy
 }
 
