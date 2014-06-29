@@ -36,6 +36,7 @@ TIMEZONE="Europe/Berlin"
 ARCH=''
 ARCH_ROOT='/mnt'
 USERNAME=''
+PID=''
 
 function message_print() {
   if [ "$1" = 1 ]
@@ -84,21 +85,27 @@ function choise_menu() {
   return 0
 }
 
-function spinner() {
-  spin[0]="-"
-  spin[1]="\\"
-  spin[2]="|"
-  spin[3]="/"
 
-  echo -n "[working] ${spin[0]}"
-  while [ kill -0 $1 ]
+function spinner_start() {
+  chars=( "-" "\\" "|" "/" )
+  interval=1
+  count=0
+
+  while true
   do
-   for i in "${spin[@]}"
-   do
-      echo -ne "\b$i"
-      sleep 0.1
-   done
+    pos=$(($count % 4))
+
+    echo -en "\b${chars[$pos]}"
+
+    count=$(($count + 1))
+    sleep $interval
   done
+}
+
+function spinner_stop() {
+  exec 2>/dev/null
+  kill $1
+  echo -en "\n"
 }
 
 function first_choise() {
@@ -324,15 +331,19 @@ function optimize_mirrorlist() {
   CCODE=${LANGUAGE:3:2}
   URL="https://www.archlinux.org/mirrorlist/?country=${CCODE}&use_mirror_status=on"
 
+
+  echo -n "working.. "
+  spinner_start &
+  PID=$!
+
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
 
-  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist &
-  PID=$!
-  spinner $PID
-  wait $PID
+  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
   
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
+  
+  spinner_stop $PID
 
   pacman -Syy
   return 0
