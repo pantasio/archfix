@@ -84,20 +84,21 @@ function choise_menu() {
   return 0
 }
 
-#Thank to http://fitnr.com/showing-a-bash-spinner.html
-function spinner()
-{
-    local pid=$1
-    local delay=0.75
-    local spinstr='|/-\'
-    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
-        local temp=${spinstr#?}
-        printf " [%c]  " "$spinstr"
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\b\b\b\b\b\b"
-    done
-    printf "    \b\b\b\b"
+function spinner() {
+  spin[0]="-"
+  spin[1]="\\"
+  spin[2]="|"
+  spin[3]="/"
+
+  echo -n "[working] ${spin[0]}"
+  while [ kill -0 $1 ]
+  do
+   for i in "${spin[@]}"
+   do
+      echo -ne "\b$i"
+      sleep 0.1
+   done
+  done
 }
 
 function first_choise() {
@@ -328,7 +329,7 @@ function optimize_mirrorlist() {
 
   rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist &
   PID=$!
-  echo "working..." spinner $PID
+  spinner $PID
   wait $PID
   
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
