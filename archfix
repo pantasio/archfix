@@ -134,7 +134,7 @@ function add_module() {
     done
 }
 
-function function add_key() {
+function add_key() {
     # thanks to 
     # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
     pacman-key -r $1
