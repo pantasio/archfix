@@ -471,7 +471,6 @@ function install_package() {
     ;;
     "powerpill")
     powerpill --noconfirm -S $2
-    echo  ""
     ;;
    *)
     echo ''
