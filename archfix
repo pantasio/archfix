@@ -36,7 +36,7 @@ TIMEZONE="Europe/Berlin"
 ARCH=''
 ARCH_ROOT='/mnt'
 
-message_print() {
+function message_print() {
   if [ "$1" = 1 ]
   then
     # green
@@ -80,6 +80,39 @@ function choise_menu() {
     fi
   done
   return 0
+}
+
+function first_choise() {
+  echo "************************************************"
+  echo "************************************************"
+  echo "*********                             **********"
+  echo "*********      ARCH FIX 2014          **********"
+  echo "*********                             **********"
+  echo "********* A ARCH INSTALLATION SCRIPT  **********"
+  echo "*********                             **********"
+  echo "*********        CREATED BY           **********"
+  echo "*********        MEMORYLEAKY          **********"
+  echo "*********                             **********"
+  echo "************************************************"
+  echo "************************************************"
+  echo ""
+  message_print 0 "This script comes with no warranty …use at own risk"
+
+  echo ""
+  echo "Whitch Step you want to execute now"
+  CHOISE_ARRAY[0]="[1] The first part partitioned your hard drive and install the base system"
+  CHOISE_ARRAY[1]="[2] The second part install all packages (xfce,cups,lightdm...) you need to have a good desktop experience"
+  choise_menu
+  if [ $RESULT -eq 1 ]
+  then
+   partitioning
+   install_base
+  else
+   optimize_mirrorlist
+  fi
+
+  #clean
+  CHOISE_ARRAY=''
 }
 
 function get_total_hdd_size() {
@@ -169,7 +202,9 @@ function partitioning() {
   mkdir /mnt/home
   mount $HDD_NAME'1' /mnt/boot
   mount $HDD_NAME'4' /mnt/home
-  
+
+  #clean
+  CHOISE_ARRAY=''
 }
 
 function install_base() {
@@ -243,22 +278,17 @@ function install_base() {
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
   umount $HDD_NAME'4'
-  
-  #eject install cd
-  eject /dev/sr0
 
   reboot #<< end
 }
 
-
-
-function create_mirrorlist() {
+function optimize_mirrorlist() {
+  echo "optimizing mirrorlist!"
   cd /etc/pacman.d/
   cp mirrorlist mirrorlist.bak
   rankmirrors -n 6 mirrorlist.backup > mirrorlist
   pacman -Syy
 }
 
-partitioning
-install_base
+first_choise
 
