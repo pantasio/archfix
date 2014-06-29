@@ -219,13 +219,19 @@ function install_base() {
   #create Linux Kernel
   arch_chroot 'mkinitcpio -p linux'
 
+  #configure Clock
+  arch_chroot "hwclock --systohc --utc"
+
+  #accountsservice Lightdm bugFix
+  arch_chroot "pacman --noconfirm -S accountsservice"
+
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
   echo "" >> /mnt/etc/default/grub
   echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
   echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
   arch_chroot 'grub-install --target=i386-pc --recheck --debug '${HDD_NAME}
-  arch_chroot 'grub-mkconfig -o /etc/default/grub'
+  arch_chroot 'grub-mkconfig -o /boot/grub/grub.cfg'
   
   #SET Root password
   arch_chroot 'passwd'
