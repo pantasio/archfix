@@ -354,7 +354,7 @@ function adduser() {
   echo "******************************************************"
   echo ""
   read -p "Enter username : " username
-  useradd -m -g users -G audio,camera,lp,network,optical,scanner,storage,sys,video,power,wheel -d /home/$username -s /bin/bash $username
+  useradd -m -g users -G audio,lp,network,optical,scanner,storage,sys,video,power,wheel -d /home/$username -s /bin/bash $username
   echo ""
   message_print 0 "******************************************************"
   message_print 0 "*****please enter a secure password for the user!*****"
