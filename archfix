@@ -173,10 +173,10 @@ function partitioning() {
 }
 
 function install_base() {
-  pacstrap /mnt base base-devel networkmanager sudo wpa_supplicant
+  pacstrap /mnt base base-devel
   genfstab -p /mnt > /mnt/etc/fstab
   echo $HOSTNAME > /mnt/etc/hostname
-  echo $LANGUAGE'.UTF-8' > /mnt/etc/locale.conf
+  echo 'LANG='$LANGUAGE'.UTF-8' > /mnt/etc/locale.conf
   echo 'LC_COLLATE=C' >> /mnt/etc/locale.conf
   echo 'KEYMAP='$KEYMAP > /mnt/etc/vconsole.conf
   arch_chroot 'ln -s /usr/share/zoneinfo/'$TIMEZONE' /etc/localtime'
@@ -193,7 +193,11 @@ function install_base() {
     echo 'en_US.UTF-8 UTF-8' >> /mnt/etc/locale.gen
   fi
   
+  #create locales
   arch_chroot 'locale-gen'
+
+  #Install extra system stuff
+  arch_chroot "pacman --noconfirm -S networkmanager sudo wpa_supplicant"
 
   #enable NetworkManager
   arch_chroot 'systemctl enable NetworkManager.service'
@@ -240,6 +244,9 @@ function install_base() {
   umount $HDD_NAME'3'
   umount $HDD_NAME'4'
   
+  #eject install cd
+  eject /dev/sr0
+
   reboot #<< end
 }
 
