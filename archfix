@@ -17,7 +17,7 @@
 # Place, Suite 330, Boston, MA  02111-1307   USA
 #
 # my personal Arch Linux Installation script 
-# Version Alpha 1
+# Version Alpha 2
 
 RESULT=0
 COUNTER=0
@@ -284,10 +284,19 @@ function install_base() {
 }
 
 function optimize_mirrorlist() {
+  
   echo "optimizing mirrorlist!"
-  cat /etc/pacman.d/mirrorlist > /etc/pacman.d/mirrorlist.old | grep '\.'${LANGUAGE:0:2}  | sed 's/#//g' > /etc/pacman.d/mirrorlist
-  rm -rf /etc/pacman.d/mirrorlist.old
+
+  TFILE="/tmp/mirrorlist.tmp"
+  CCODE=${LANGUAGE:3:2}
+  URL="https://www.archlinux.org/mirrorlist/?country=${CCODE}&use_mirror_status=on"
+
+  curl -so ${TFILE} ${url}
+  sed -i 's/^#Server/Server/g' ${TFILE}
+  mv -i ${TFILE} /etc/pacman.d/mirrorlist
+  
   rankmirrors /etc/pacman.d/mirrorlist
+
   pacman -Syy
 }
 
