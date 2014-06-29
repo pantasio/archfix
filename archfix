@@ -86,16 +86,44 @@ function choise_menu() {
 }
 
 
-function spinner() {
-  printf "working.... |"
-  rotate='|/-\'
+function stop_spinner() {
+  kill -s SIGHUP $PID &
+  { wait $PID; } &> /dev/null
+  PID=0
+}
 
-  while kill -n 0 $PID 2>/dev/null; do
-    rotate="${rotate#?}${rotate%???}"
-    printf '\b%.1s' "$rotate"
-    sleep 1
+function start_spinner() {
+  setterm -cursor off
+  parts=( "|" "/" "-" "\\" )
+
+  while [ 1 ];
+  do
+    for ix in 0 1 2 3; 
+    do
+     echo -en ${parts[$ix]}
+     sleep .1
+     echo -en "\b"
+    done
   done
 }
+
+function spinner()  {
+  if [ $1 == "start" ];
+  then
+   if [ $PID -eq "0" ];
+   then
+   start_spinner&
+   PID=$!
+   fi
+  elif [ $1 == "stop" ];
+  then
+   if [ $PID -ne "0" ];
+   then
+   stop_spinner
+   fi
+  fi
+}
+
 
 function first_choise() {
   clear
@@ -323,13 +351,10 @@ function optimize_mirrorlist() {
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
 
-  
-  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist &
-  PID=$!
-  spinner $PID
-  wait $PID
-  
+  spinner "start"
+  rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
   sed -i '/^#/ d' /etc/pacman.d/mirrorlist
+  spinner "stop"
 
   pacman -Syy
   return 0
