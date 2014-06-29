@@ -464,13 +464,13 @@ function install_yaourt() {
 function install_package() {
   case "$1" in
    "pacman")
-    su - ${USERNAME} -c ' pacman --noconfirm -S '$2
+    su - ${USERNAME} -c ' pacman --noconfirm -S '"$2"
     ;;
    "yaourt")
-    su - ${USERNAME} -c ' yaourt --noconfirm -S '$2
+    su - ${USERNAME} -c ' yaourt --noconfirm -S '"$2"
     ;;
     "powerpill")
-    su - ${USERNAME} -c ' powerpill --noconfirm -S '$2
+    su - ${USERNAME} -c ' powerpill --noconfirm -S '"$2"
     echo  ""
     ;;
    *)
@@ -667,6 +667,7 @@ function install_video_driver() {
   echo ""
   ARCH=$(uname -m)
 
+  CHOISE_ARRAY=''
   echo "Please select your Video Card"
   CHOISE_ARRAY[0]="NVIDIA"
   CHOISE_ARRAY[1]="bumblebee"
@@ -714,7 +715,7 @@ function install_video_driver() {
       pacman --noconfirm -Rdds lib32-ati-dri
     fi
     install_package "powerpill" "linux-headers"
-    install_package "powerpill" "catalyst-total"
+    install_package "yaourt" "catalyst-total"
     aticonfig --initial --output=/etc/X11/xorg.conf.d/20-radeon.conf
     systemctl enable atieventsd
     systemctl enable catalyst-hook
