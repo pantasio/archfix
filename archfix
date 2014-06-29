@@ -124,6 +124,53 @@ function spinner()  {
   fi
 }
 
+function add_module() {
+    # thanks to 
+    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+    for MODULE in $1; do
+      [[ $# -lt 2 ]] && MODULE_NAME="$MODULE" || MODULE_NAME="$2";
+      echo "$MODULE" >> /etc/modules-load.d/$MODULE_NAME.conf
+      modprobe "$MODULE"
+    done
+}
+
+function function add_key() {
+    # thanks to 
+    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+    pacman-key -r $1
+    pacman-key --lsign-key $1
+}
+
+
+function add_repository() { 
+    # thanks to 
+    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+    REPO=${1}
+    URL=${2}
+    [[ -n ${3} ]] && SIGLEVEL="\nSigLevel = ${3}" || SIGLEVEL=""
+
+    CHECK_REPO=`grep -F "${REPO}" /etc/pacman.conf`
+    if [[ -z $CHECK_REPO ]]; then
+      echo -e "\n[${REPO}]${SIGLEVEL}\nServer = ${URL}" >> /etc/pacman.conf
+      pacman -Syy
+    fi
+}
+
+function replace_line() {
+    # thanks to 
+    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+    SEARCH=${1}
+    REPLACE=${2}
+    FILEPATH=${3}
+    FILEBASE=`basename ${3}`
+
+    sed -e "s/${SEARCH}/${REPLACE}/" ${FILEPATH} > /tmp/${FILEBASE} 2>"$LOG"
+    if [[ ${?} -eq 0 ]]; then
+      mv /tmp/${FILEBASE} ${FILEPATH}
+    else
+      echo "failed: ${SEARCH} - ${FILEPATH}"
+    fi
+}
 
 function first_choise() {
   clear
@@ -156,6 +203,17 @@ function first_choise() {
    install_yaourt
    adduser
    install_powerpill
+   install_compress_tools
+   install_alsa
+   install_pulse
+   install_bash_goodies
+   install_avahi_deamon
+   install_ntfs_tools
+   install_openssh
+   readahead_on
+   install_xserver
+   install_infinality_font_config
+   install_video_driver
   fi
 
   #clean
@@ -454,6 +512,232 @@ function install_powerpill() {
   powerpill -Syu
   return 0
 }
+
+function install_compress_tools() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing Compress Tools! ***************"
+  echo "******************************************************"
+  echo ""
+
+  install_package "powerpill" "unrar zip p7zip arj unace unzip"
+  install_package "powerpill" "file-roller"
+  return 0
+}
+
+function install_alsa() {
+  clear
+  echo "******************************************************"
+  echo "*********       Installing Alsa!       ***************"
+  echo "******************************************************"
+  echo ""
+  ARCH=$(uname -m)
+  install_package "powerpill" "alsa-utils alsa-plugins"
+  [[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-alsa-plugins"
+  return 0
+}
+
+function install_pulse() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing Pulseaudio!   ***************"
+  echo "******************************************************"
+  echo ""
+  ARCH=$(uname -m)
+  install_package "powerpill" "pulseaudio pulseaudio-alsa"
+  [[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-libpulse"
+  echo "load-module module-switch-on-connect" >> /etc/pulse/default.pa
+  return 0
+}
+
+function install_bash_goodies() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing Bash Goodies!   ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "bc rsync mlocate bash-completion pkgstats ntp"
+  updatedb
+  timedatectl set-ntp true
+  return 0
+}
+
+function install_avahi_deamon() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing Avahi Deamon!   ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "avahi nss-mdns"
+  systemctl enable avahi-daemon
+  systemctl enable avahi-dnsconfd
+  return 0
+}
+
+function install_ntfs_tools() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing NTFS TOOLS!     ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "ntfs-3g dosfstools exfat-utils fuse fuse-exfat"
+  add_module "fuse"
+  return 0
+}
+
+function install_openssh() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing OPEN SSH  !     ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "openssh"
+  return 0
+}
+
+function readahead_on() {
+  clear
+  echo "******************************************************"
+  echo "*********      enable readahead  !     ***************"
+  echo "******************************************************"
+  echo ""
+
+  systemctl enable systemd-readahead-collect
+  systemctl enable systemd-readahead-replay
+}
+
+function install_xserver() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing X Server  !     ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "xorg-server xorg-server-utils xorg-xinit"
+  install_package "powerpill" "xf86-input-synaptics xf86-input-mouse xf86-input-keyboard"
+  install_package "powerpill" "mesa gamin"
+  localectl set-keymap ${KEYMAP}
+  
+  #X Server Keyboard layout
+  CCODE=${LANGUAGE:0:2}
+  touch /etc/X11/xorg.conf.d/20-keyboard.conf 
+  echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
+  echo '       Identifier "keyboard"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
+  echo '       MatchIsKeyboard "yes"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
+  echo '       Option "XkbLayout" "'$CCODE'"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
+  echo 'EndSection' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
+
+  return 0
+}
+
+function install_infinality_font_config() {
+  clear
+  echo "******************************************************"
+  echo "*******     Installing infinality font config ! ******"
+  echo "******************************************************"
+  echo ""
+  ARCH=$(uname -m)
+  add_key "962DDE58"
+  add_repository "infinality-bundle" "http://bohoomil.com/repo/\$arch"
+  [[ $ARCH == x86_64 ]] && add_repository "infinality-bundle-multilib" "http://bohoomil.com/repo/multilib/\$arch"
+  pacman -Syu
+  pacman --noconfirm -Rdds freetype2 fontconfig cairo
+  pacman --noconfirm -Rdds freetype2-ubuntu fontconfig-ubuntu cairo-ubuntu
+
+  pacman --noconfirm --needed -S infinality-bundle
+  [[ $ARCH == x86_64 ]] && pacman --noconfirm --needed -S infinality-bundle-multilib
+  
+  return 0
+}
+
+function install_openssh() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing OPEN SSH  !     ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "openssh"
+  return 0
+}
+
+function install_video_driver() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing VIDEO DRIVER  ! ***************"
+  echo "******************************************************"
+  echo ""
+  ARCH=$(uname -m)
+
+  echo "Please select your Video Card"
+  CHOISE_ARRAY[0]="NVIDIA"
+  CHOISE_ARRAY[1]="bumblebee"
+  CHOISE_ARRAY[2]="Catalyst"
+  CHOISE_ARRAY[3]="VirtualBox"
+  choise_menu
+
+  if [ $RESULT -eq 1 ] #NVIDIA
+  then
+    pacman --noconfirm -Rdds nouveau-dri
+    pacman --noconfirm --needed -S nvidia{,-utils}
+    install_package "powerpill" "pangox-compat"
+    install_package "powerpill" "libva-vdpau-driver"
+    if [[ ${ARCH} == x86_64 ]]
+    then
+    	pacman --noconfirm -Rdds lib32-nouveau-dri
+    	pacman --noconfirm --needed -S  "lib32-nvidia-utils"
+    fi
+    mkinitcpio -p linux
+    nvidia-xconfig --add-argb-glx-visuals --allow-glx-with-composite --composite -no-logo --render-accel -o /etc/X11/xorg.conf.d/20-nvidia.conf;
+  fi
+
+  if [ $RESULT -eq 2 ] #bumblebee
+  then
+    pacman --noconfirm -Rdds nouveau-dri
+    pacman --noconfirm --needed -S xf86-video-intel bumblebee nvidia
+    install_package "powerpill" "pangox-compat"
+    install_package "powerpill" "libva-vdpau-driver"
+    if [[ ${ARCH} == x86_64 ]]
+    then
+    	pacman --noconfirm -Rdds lib32-nouveau-dri
+    	pacman --noconfirm --needed -S  "lib32-nvidia-utils"
+    fi
+    replace_line '*options nouveau modeset=1' '#options nouveau modeset=1' /etc/modprobe.d/modprobe.conf
+    replace_line '*MODULES="nouveau"' '#MODULES="nouveau"' /etc/mkinitcpio.conf
+    mkinitcpio -p linux
+    gpasswd -a ${USERNAME} bumblebee
+  fi
+
+  if [ $RESULT -eq 3 ] #Catalyst
+  then
+    pacman --noconfirm -Rdds ati-dri
+   [[ -f /etc/modules-load.d/ati.conf ]] && rm /etc/modules-load.d/ati.conf
+    if [[ ${ARCHI} == x86_64 ]]; then
+      is_package_installed "lib32-ati-dri" && pacman --noconfirm -Rdds lib32-ati-dri
+    fi
+    install_package "powerpill" "linux-headers"
+    # Add repository
+    install_package "powerpill" "catalyst-total"
+    aticonfig --initial --output=/etc/X11/xorg.conf.d/20-radeon.conf
+    systemctl enable atieventsd
+    systemctl enable catalyst-hook
+    systemctl enable temp-links-catalyst
+   
+  fi
+
+  if [ $RESULT -eq 4 ] #VirtualBox
+  then
+   install_package "powerpill" "virtualbox-guest-utils"
+   install_package "powerpill" "mesa-libgl"
+   add_module "vboxguest vboxsf vboxvideo" "virtualbox-guest"
+   gpasswd -a ${USERNAME} vboxsf
+   systemctl disable ntpd
+   systemctl enable vboxservice
+  fi
+
+  CHOISE_ARRAY=''
+  return 0
+}
+
+
 
 first_choise
 
