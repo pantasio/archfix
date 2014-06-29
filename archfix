@@ -217,7 +217,7 @@ function first_choise() {
   fi
 
   #clean
-  CHOISE_ARRAY=''
+  unset CHOISE_ARRAY
   return 0
 }
 
@@ -311,7 +311,7 @@ function partitioning() {
   mount $HDD_NAME'4' /mnt/home
 
   #clean
-  CHOISE_ARRAY=''
+  unset CHOISE_ARRAY
   return 0
 }
 
@@ -666,12 +666,13 @@ function install_video_driver() {
   echo ""
   ARCH=$(uname -m)
 
-  CHOISE_ARRAY=''
+
   echo "Please select your Video Card"
   CHOISE_ARRAY[0]="NVIDIA"
   CHOISE_ARRAY[1]="bumblebee"
   CHOISE_ARRAY[2]="Catalyst"
   CHOISE_ARRAY[3]="VirtualBox"
+
   choise_menu
 
   if [ $RESULT -eq 1 ] #NVIDIA
@@ -732,7 +733,8 @@ function install_video_driver() {
    systemctl enable vboxservice
   fi
 
-  CHOISE_ARRAY=''
+  #clean
+  unset CHOISE_ARRAY
   return 0
 }
 
