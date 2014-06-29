@@ -111,6 +111,7 @@ function first_choise() {
   else
    optimize_mirrorlist
    install_yaourt
+   adduser
   fi
 
   #clean
@@ -309,8 +310,7 @@ function optimize_mirrorlist() {
   pacman -Syy
 }
 
-function install_yaourt()
-{
+function install_yaourt() {
   clear
   echo "******************************************************"
   echo "***************   Installing YAOURT!   ***************"
@@ -345,6 +345,23 @@ function install_yaourt()
   rm -rf yaourt.tar.gz
 
   cd
+}
+
+function adduser() {
+  clear
+  echo "******************************************************"
+  echo "***************      Add USER!         ***************"
+  echo "******************************************************"
+  echo ""
+  read -p "Enter username : " username
+  useradd -m -g users -G audio,camera,lp,network,optical,scanner,storage,sys,video,power,wheel -d /home/$username -s /bin/bash $username
+  echo ""
+  message_print 0 "******************************************************"
+  message_print 0 "*****please enter a secure password for the user!*****"
+  message_print 0 "******************************************************"
+  echo ""
+  passwd $username
+  echo ""
 }
 
 first_choise
