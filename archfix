@@ -38,6 +38,58 @@ ARCH_ROOT='/mnt'
 USERNAME=''
 PID=0
 
+function first_choise() {
+  clear
+  echo "************************************************"
+  echo "************************************************"
+  echo "*********                             **********"
+  echo "*********      ARCH FIX 2014          **********"
+  echo "*********                             **********"
+  echo "********* A ARCH INSTALLATION SCRIPT  **********"
+  echo "*********                             **********"
+  echo "*********        CREATED BY           **********"
+  echo "*********        MEMORYLEAKY          **********"
+  echo "*********                             **********"
+  echo "************************************************"
+  echo "************************************************"
+  echo ""
+  message_print 0 "This script comes with no warranty …use at own risk"
+
+  echo ""
+  echo "Whitch Step you want to execute now"
+  CHOISE_ARRAY[0]="The first part partitioned your hard drive and install the base system"
+  CHOISE_ARRAY[1]="The second part install all packages (xfce,cups,lightdm...) you need to have a good desktop experience"
+  choise_menu
+  if [ $RESULT -eq 1 ]
+  then
+   partitioning
+   install_base
+  else
+   optimize_mirrorlist
+   install_yaourt
+   adduser
+   install_powerpill
+   install_compress_tools
+   install_alsa
+   install_pulse
+   install_bash_goodies
+   install_avahi_deamon
+   install_ntfs_tools
+   install_openssh
+   readahead_on
+   install_xserver
+   install_infinality_font_config
+   install_video_driver
+   install_cups
+   install_xfce
+   install_lightdm
+  fi
+
+  #clean
+  unset -v CHOISE_ARRAY[*]
+  return 0
+}
+
 function message_print() {
   if [ "$1" = 1 ]
   then
@@ -170,55 +222,6 @@ function replace_line() {
     else
       echo "failed: ${SEARCH} - ${FILEPATH}"
     fi
-}
-
-function first_choise() {
-  clear
-  echo "************************************************"
-  echo "************************************************"
-  echo "*********                             **********"
-  echo "*********      ARCH FIX 2014          **********"
-  echo "*********                             **********"
-  echo "********* A ARCH INSTALLATION SCRIPT  **********"
-  echo "*********                             **********"
-  echo "*********        CREATED BY           **********"
-  echo "*********        MEMORYLEAKY          **********"
-  echo "*********                             **********"
-  echo "************************************************"
-  echo "************************************************"
-  echo ""
-  message_print 0 "This script comes with no warranty …use at own risk"
-
-  echo ""
-  echo "Whitch Step you want to execute now"
-  CHOISE_ARRAY[0]="The first part partitioned your hard drive and install the base system"
-  CHOISE_ARRAY[1]="The second part install all packages (xfce,cups,lightdm...) you need to have a good desktop experience"
-  choise_menu
-  if [ $RESULT -eq 1 ]
-  then
-   partitioning
-   install_base
-  else
-   optimize_mirrorlist
-   install_yaourt
-   adduser
-   install_powerpill
-   install_compress_tools
-   install_alsa
-   install_pulse
-   install_bash_goodies
-   install_avahi_deamon
-   install_ntfs_tools
-   install_openssh
-   readahead_on
-   install_xserver
-   install_infinality_font_config
-   install_video_driver
-  fi
-
-  #clean
-  unset -v CHOISE_ARRAY[*]
-  return 0
 }
 
 function get_total_hdd_size() {
@@ -739,6 +742,47 @@ function install_video_driver() {
 
   #clean
   unset -v CHOISE_ARRAY[*]
+  return 0
+}
+
+function install_cups() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing CUPS!         ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "cups cups-filters ghostscript gsfonts"
+  install_package "powerpill" "gutenprint foomatic-db foomatic-db-engine foomatic-db-nonfree foomatic-filters hplip splix cups-pdf"
+  install_package "powerpill" "system-config-printer"
+  system_ctl enable cups
+  return 0
+}
+
+function install_xfce() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing XFCE4!        ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "xfce4 xfce4-goodies mupdf"
+  install_package "powerpill" "gvfs gvfs-smb gvfs-afc lxpolkit"
+  install_package "powerpill" "xdg-user-dirs"
+  install_package "yaourt" "gnome-defaults-list"
+  install_package "yaourt" "xfce-theme-greybird-git"
+  install_package "powerpill" "faenza-icon-theme"
+  install_package "yaourt" "pa-applet-git"
+  install_package "yaourt" "xfce4-whiskermenu-plugin"
+  return 0
+}
+
+function install_lightdm() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing LIGHTDM!      ***************"
+  echo "******************************************************"
+  echo ""
+  install_package "powerpill" "lightdm lightdm-gtk3-greeter"
+  system_ctl enable lightdm
   return 0
 }
 
