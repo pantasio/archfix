@@ -73,6 +73,7 @@ function first_choise() {
    install_alsa
    install_pulse
    install_bash_goodies
+   user_config
    install_avahi_deamon
    install_ntfs_tools
    install_openssh
@@ -558,9 +559,24 @@ function install_bash_goodies() {
   echo "*********   Installing Bash Goodies!   ***************"
   echo "******************************************************"
   echo ""
-  install_package "powerpill" "bc rsync mlocate bash-completion pkgstats ntp"
+  install_package "powerpill" "bc rsync mlocate bash-completion pkgstats ntp git"
   updatedb
   timedatectl set-ntp true
+  return 0
+}
+
+function user_config() {
+  clear
+  echo "******************************************************"
+  echo "*********     configure system!        ***************"
+  echo "******************************************************"
+  echo ""
+
+  git clone https://github.com/memoryleakx/dotfiles.git
+  cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /etc/skel/
+  cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
+  cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /home/${username}/
+  rm -fr dotfiles
   return 0
 }
 
@@ -790,6 +806,9 @@ function install_lightdm() {
   systemctl enable lightdm
   return 0
 }
+
+
+
 
 
 
