@@ -754,7 +754,7 @@ function install_cups() {
   install_package "powerpill" "cups cups-filters ghostscript gsfonts"
   install_package "powerpill" "gutenprint foomatic-db foomatic-db-engine foomatic-db-nonfree foomatic-filters hplip splix cups-pdf"
   install_package "powerpill" "system-config-printer"
-  system_ctl enable cups
+  systemctl enable cups
   return 0
 }
 
@@ -787,7 +787,7 @@ function install_lightdm() {
   echo "******************************************************"
   echo ""
   install_package "powerpill" "lightdm lightdm-gtk3-greeter"
-  system_ctl enable lightdm
+  systemctl enable lightdm
   return 0
 }
 
