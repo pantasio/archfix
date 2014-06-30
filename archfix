@@ -677,8 +677,8 @@ function install_video_driver() {
 
   if [ $RESULT -eq 1 ] #NVIDIA
   then
-    pacman --noconfirm -Rdds nouveau-dri
-    pacman --noconfirm --needed -S nvidia{,-utils}
+    pacman --noconfirm -Rdds nouveau-dri mesa-libgl
+    install_package "powerpill" "nvidia nvidia-utils"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
@@ -692,8 +692,8 @@ function install_video_driver() {
 
   if [ $RESULT -eq 2 ] #bumblebee
   then
-    pacman --noconfirm -Rdds nouveau-dri
-    pacman --noconfirm --needed -S xf86-video-intel bumblebee nvidia
+    pacman --noconfirm -Rdds nouveau-dri mesa-libgl
+    install_package "powerpill" "xf86-video-intel bumblebee nvidia nvidia-utils"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
