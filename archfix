@@ -217,7 +217,7 @@ function first_choise() {
   fi
 
   #clean
-  unset CHOISE_ARRAY
+  unset -v CHOISE_ARRAY[*]
   return 0
 }
 
@@ -311,7 +311,7 @@ function partitioning() {
   mount $HDD_NAME'4' /mnt/home
 
   #clean
-  unset CHOISE_ARRAY
+  unset -v CHOISE_ARRAY[*]
   return 0
 }
 
@@ -734,7 +734,7 @@ function install_video_driver() {
   fi
 
   #clean
-  unset CHOISE_ARRAY
+  unset -v CHOISE_ARRAY[*]
   return 0
 }
 
