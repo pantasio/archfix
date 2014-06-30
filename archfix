@@ -772,6 +772,11 @@ function install_xfce() {
   install_package "powerpill" "faenza-icon-theme"
   install_package "yaourt" "pa-applet-git"
   install_package "yaourt" "xfce4-whiskermenu-plugin"
+
+  cp -fv /etc/skel/.xinitrc /home/${USERNAME}/
+  echo -e "exec startxfce4" >> /home/${USERNAME}/.xinitrc
+  chown -R ${USERNAME}:users /home/${USERNAME}/.xinitrc
+
   return 0
 }
 
