@@ -677,14 +677,16 @@ function install_video_driver() {
 
   if [ $RESULT -eq 1 ] #NVIDIA
   then
-    pacman --noconfirm -Rdds nouveau-dri mesa-libgl
-    install_package "powerpill" "nvidia nvidia-utils"
+    pacman --noconfirm -Rdds nouveau-dri
+    pacman --noconfirm -Rdds mesa-libgl
+    install_package "powerpill" "nvidia nvidia-libgl nvidia-utils"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
     	pacman --noconfirm -Rdds lib32-nouveau-dri
-    	pacman --noconfirm --needed -S  "lib32-nvidia-utils"
+    	install_package "powerpill" "lib32-nvidia-utils"
+        install_package "powerpill" "lib32-nvidia-libgl"
     fi
     mkinitcpio -p linux
     nvidia-xconfig --add-argb-glx-visuals --allow-glx-with-composite --composite -no-logo --render-accel -o /etc/X11/xorg.conf.d/20-nvidia.conf;
@@ -692,14 +694,16 @@ function install_video_driver() {
 
   if [ $RESULT -eq 2 ] #bumblebee
   then
-    pacman --noconfirm -Rdds nouveau-dri mesa-libgl
-    install_package "powerpill" "xf86-video-intel bumblebee nvidia nvidia-utils"
+    pacman --noconfirm -Rdds nouveau-dri
+    pacman --noconfirm -Rdds mesa-libgl
+    install_package "powerpill" "xf86-video-intel bumblebee nvidia nvidia-libgl nvidia-utils"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
     	pacman --noconfirm -Rdds lib32-nouveau-dri
-    	pacman --noconfirm --needed -S  "lib32-nvidia-utils"
+    	install_package "powerpill" "lib32-nvidia-utils"
+        install_package "powerpill" "lib32-nvidia-libgl"
     fi
     replace_line '*options nouveau modeset=1' '#options nouveau modeset=1' /etc/modprobe.d/modprobe.conf
     replace_line '*MODULES="nouveau"' '#MODULES="nouveau"' /etc/mkinitcpio.conf
