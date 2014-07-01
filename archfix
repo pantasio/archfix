@@ -143,6 +143,7 @@ function choise_menu() {
 function unset_menu_items() {
   unset CHOISE_ARRAY
   declare -a CHOISE_ARRAY
+  $COUNTER=0
 }
 
 
