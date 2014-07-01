@@ -21,7 +21,7 @@
 
 RESULT=0
 COUNTER=0
-CHOISE_ARRAY=''
+declare -a CHOISE_ARRAY
 HDD_NAME=''
 TOTAL_HDD_SIZE=''
 TOTAL_RAM_SIZE=''
@@ -141,11 +141,8 @@ function choise_menu() {
 }
 
 function unset_menu_items() {
-   LEN=${#CHOISE_ARRAY[@]}
-   for ((i=1;i<=$LEN;i++));
-   do
-    unset ARRAY[$i]
-   done
+  unset CHOISE_ARRAY
+  declare -a CHOISE_ARRAY
 }
 
 
