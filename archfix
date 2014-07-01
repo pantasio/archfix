@@ -21,7 +21,7 @@
 
 RESULT=0
 COUNTER=0
-CHOISE_ARRAY=''
+declare -A CHOISE_ARRAY
 HDD_NAME=''
 TOTAL_HDD_SIZE=''
 TOTAL_RAM_SIZE=''
@@ -87,7 +87,7 @@ function first_choise() {
   fi
 
   #clean
-  unset -v CHOISE_ARRAY[*]
+  unset_menu_items
   return 0
 }
 
@@ -136,6 +136,11 @@ function choise_menu() {
     fi
   done
   return 0
+}
+
+function unset_menu_items() {
+  unset CHOISE_ARRAY
+  declare -A CHOISE_ARRAY
 }
 
 
@@ -315,7 +320,7 @@ function partitioning() {
   mount $HDD_NAME'4' /mnt/home
 
   #clean
-  unset -v CHOISE_ARRAY[*]
+  unset_menu_items
   return 0
 }
 
@@ -375,6 +380,8 @@ function install_base() {
 
   #accountsservice Lightdm bugFix
   arch_chroot "pacman --noconfirm -S accountsservice"
+  #git
+  arch_chroot "pacman --noconfirm -S git"
 
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
@@ -559,7 +566,7 @@ function install_bash_goodies() {
   echo "*********   Installing Bash Goodies!   ***************"
   echo "******************************************************"
   echo ""
-  install_package "powerpill" "bc rsync mlocate bash-completion pkgstats ntp git"
+  install_package "powerpill" "bc rsync mlocate bash-completion pkgstats ntp"
   updatedb
   timedatectl set-ntp true
   return 0
@@ -757,7 +764,7 @@ function install_video_driver() {
   fi
 
   #clean
-  unset -v CHOISE_ARRAY[*]
+  unset_menu_items
   return 0
 }
 
