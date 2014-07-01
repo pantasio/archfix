@@ -121,7 +121,7 @@ function question_yesno() {
 }
 
 function choise_menu() {
-  $COUNTER=0
+  COUNTER=0
   for i in "${CHOISE_ARRAY[@]}"
   do
     COUNTER=$(( $COUNTER + 1 ))
