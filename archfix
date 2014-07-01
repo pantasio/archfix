@@ -62,9 +62,11 @@ function first_choise() {
   choise_menu
   if [ $RESULT -eq 1 ]
   then
+   unset_menu_items
    partitioning
    install_base
   else
+   unset_menu_items
    optimize_mirrorlist
    install_yaourt
    adduser
@@ -88,8 +90,6 @@ function first_choise() {
    install_archey
   fi
 
-  #clean
-  unset_menu_items
   return 0
 }
 
