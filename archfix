@@ -68,12 +68,12 @@ function first_choise() {
    optimize_mirrorlist
    install_yaourt
    adduser
+   user_config
    install_powerpill
    install_compress_tools
    install_alsa
    install_pulse
    install_bash_goodies
-   user_config
    install_avahi_deamon
    install_ntfs_tools
    install_openssh
@@ -268,6 +268,12 @@ function arch_chroot() {
 }
 
 function partitioning() {
+  clear
+  echo "******************************************************"
+  echo "***************   Auto Partitioning!   ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
   calc_optimal_swap_size
   echo "On which drive you want to install Arch?"
   eval CHOISE_ARRAY=("/dev/"$(lsblk | grep disk | cut -d" " -f1) )
@@ -325,6 +331,12 @@ function partitioning() {
 }
 
 function install_base() {
+  clear
+  echo "******************************************************"
+  echo "***************  Install Base System!  ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
   pacstrap /mnt base base-devel
   genfstab -p /mnt > /mnt/etc/fstab
   echo $HOSTNAME > /mnt/etc/hostname
@@ -497,6 +509,7 @@ function adduser() {
   echo "***************      Add USER!         ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   read -p "Enter username : " USERNAME
   useradd -m -g users -G audio,lp,network,optical,scanner,storage,sys,video,power,wheel -d /home/$USERNAME -s /bin/bash $USERNAME
   echo ""
@@ -517,6 +530,7 @@ function install_powerpill() {
   echo "***************  Installing POWERPILL! ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "yaourt" "powerpill"
   reflector -p rsync -f n -l m
   powerpill -Syu
@@ -529,7 +543,7 @@ function install_compress_tools() {
   echo "*********   Installing Compress Tools! ***************"
   echo "******************************************************"
   echo ""
-
+  sleep 2
   install_package "powerpill" "unrar zip p7zip arj unace unzip"
   install_package "powerpill" "file-roller"
   return 0
@@ -553,6 +567,7 @@ function install_pulse() {
   echo "*********     Installing Pulseaudio!   ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   ARCH=$(uname -m)
   install_package "powerpill" "pulseaudio pulseaudio-alsa"
   [[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-libpulse"
@@ -566,6 +581,7 @@ function install_bash_goodies() {
   echo "*********   Installing Bash Goodies!   ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "bc rsync mlocate bash-completion pkgstats ntp"
   updatedb
   timedatectl set-ntp true
@@ -578,7 +594,7 @@ function user_config() {
   echo "*********     configure system!        ***************"
   echo "******************************************************"
   echo ""
-
+  sleep 2
   git clone https://github.com/memoryleakx/dotfiles.git
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /etc/skel/
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
@@ -593,6 +609,7 @@ function install_avahi_deamon() {
   echo "*********   Installing Avahi Deamon!   ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "avahi nss-mdns"
   systemctl enable avahi-daemon
   systemctl enable avahi-dnsconfd
@@ -605,6 +622,7 @@ function install_ntfs_tools() {
   echo "*********   Installing NTFS TOOLS!     ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "ntfs-3g dosfstools exfat-utils fuse fuse-exfat"
   add_module "fuse"
   return 0
@@ -616,6 +634,7 @@ function install_openssh() {
   echo "*********   Installing OPEN SSH  !     ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "openssh"
   return 0
 }
@@ -637,6 +656,7 @@ function install_xserver() {
   echo "*********   Installing X Server  !     ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "xorg-server xorg-server-utils xorg-xinit"
   install_package "powerpill" "xf86-input-synaptics xf86-input-mouse xf86-input-keyboard"
   install_package "powerpill" "mesa gamin"
@@ -660,6 +680,7 @@ function install_infinality_font_config() {
   echo "*******     Installing infinality font config ! ******"
   echo "******************************************************"
   echo ""
+  sleep 2
   ARCH=$(uname -m)
   add_key "962DDE58"
   add_repository "infinality-bundle" "http://bohoomil.com/repo/\$arch"
@@ -680,6 +701,7 @@ function install_openssh() {
   echo "*********   Installing OPEN SSH  !     ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "openssh"
   return 0
 }
@@ -774,6 +796,7 @@ function install_cups() {
   echo "*********     Installing CUPS!         ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "cups cups-filters ghostscript gsfonts"
   install_package "powerpill" "gutenprint foomatic-db foomatic-db-engine foomatic-db-nonfree foomatic-filters hplip splix cups-pdf"
   install_package "powerpill" "system-config-printer"
@@ -787,6 +810,7 @@ function install_xfce() {
   echo "*********     Installing XFCE4!        ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "xfce4 xfce4-goodies mupdf"
   install_package "powerpill" "gvfs gvfs-smb gvfs-afc lxpolkit"
   install_package "powerpill" "xdg-user-dirs"
@@ -809,12 +833,22 @@ function install_lightdm() {
   echo "*********     Installing LIGHTDM!      ***************"
   echo "******************************************************"
   echo ""
+  sleep 2
   install_package "powerpill" "lightdm lightdm-gtk3-greeter"
   systemctl enable lightdm
   return 0
 }
 
-
+function install_plank() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing PLANK DOCK!   ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  install_package "powerpill" "plank plank-config"
+  return 0
+}
 
 
 
