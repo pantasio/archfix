@@ -88,6 +88,7 @@ function first_choise() {
    install_lightdm
    install_plank
    install_archey
+   install_libreoffice
   fi
 
   return 0
@@ -863,6 +864,21 @@ function install_archey() {
   install_package "yaourt" "archey"
   return 0
 }
+
+
+function install_libreoffice() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing libreoffice!  ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  CCODE=${LANGUAGE:0:2}
+  install_package "powerpill" "libreoffice-base libreoffice-common libreoffice-calc libreoffice-writer"
+  install_package "powerpill" "libreoffice-gnome hunspell hunspell-"$CCODE" libreoffice-"$CCODE
+  return 0
+}
+
 
 
 
