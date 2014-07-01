@@ -121,6 +121,7 @@ function question_yesno() {
 }
 
 function choise_menu() {
+  $COUNTER=0
   for i in "${CHOISE_ARRAY[@]}"
   do
     COUNTER=$(( $COUNTER + 1 ))
@@ -143,7 +144,6 @@ function choise_menu() {
 function unset_menu_items() {
   unset CHOISE_ARRAY
   declare -a CHOISE_ARRAY
-  $COUNTER=0
 }
 
 
