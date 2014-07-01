@@ -89,6 +89,11 @@ function first_choise() {
    install_plank
    install_archey
    install_libreoffice
+   install_gimp
+   install_inkscape
+   install_firewall
+   install_gaming_stuff
+   install_gtk3_system_apps
   fi
 
   return 0
@@ -823,6 +828,7 @@ function install_xfce() {
   install_package "powerpill" "faenza-icon-theme"
   install_package "yaourt" "pa-applet-git"
   install_package "yaourt" "xfce4-whiskermenu-plugin"
+  install_package "powerpill" "light-locker"
 
   cp -fv /etc/skel/.xinitrc /home/${USERNAME}/
   echo -e "exec startxfce4" >> /home/${USERNAME}/.xinitrc
@@ -879,7 +885,64 @@ function install_libreoffice() {
   return 0
 }
 
+function install_gimp() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing GIMP!         ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  CCODE=${LANGUAGE:0:2}
+  install_package "powerpill" "gimp gimp-help-"$CCODE" gimp-plugin-gmic gimp-plugin-fblur"
+  return 0
+}
 
+function install_inkscape() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing inkscape!     ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  CCODE=${LANGUAGE:0:2}
+  install_package "powerpill" "inkscape"
+  return 0
+}
+
+function install_firewall() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing inkscape!     ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  pacman --noconfirm -Rdds firewalld
+  install_package "powerpill" "ufw gufw"
+  return 0
+}
+
+function install_gaming_stuff() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing Gaming Stuff! ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  install_package "powerpill" "steam playonlinux"
+  return 0
+}
+
+function install_gtk3_system_apps() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing GTK3 System Apps!    **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  pacman --noconfirm -Rns mousepad xfce4-taskmanager
+  install_package "powerpill" "gedit gedit-plugins gnome-system-monitor"
+  return 0
+}
 
 
 
