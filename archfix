@@ -141,7 +141,11 @@ function choise_menu() {
 }
 
 function unset_menu_items() {
-  unset CHOISE_ARRAY
+   LEN=${#CHOISE_ARRAY[@]}
+   for ((i=1;i<=$LEN;i++));
+   do
+    unset ARRAY[$i]
+   done
 }
 
 
