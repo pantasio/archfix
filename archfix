@@ -84,6 +84,8 @@ function first_choise() {
    install_cups
    install_xfce
    install_lightdm
+   install_plank
+   install_archey
   fi
 
   #clean
@@ -598,7 +600,7 @@ function user_config() {
   git clone https://github.com/memoryleakx/dotfiles.git
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /etc/skel/
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
-  cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /home/${username}/
+  cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /home/${USERNAME}/
   rm -fr dotfiles
   return 0
 }
@@ -685,7 +687,7 @@ function install_infinality_font_config() {
   add_key "962DDE58"
   add_repository "infinality-bundle" "http://bohoomil.com/repo/\$arch"
   [[ $ARCH == x86_64 ]] && add_repository "infinality-bundle-multilib" "http://bohoomil.com/repo/multilib/\$arch"
-  pacman -Syu
+
   pacman --noconfirm -Rdds freetype2 fontconfig cairo
   pacman --noconfirm -Rdds freetype2-ubuntu fontconfig-ubuntu cairo-ubuntu
 
@@ -847,6 +849,17 @@ function install_plank() {
   echo ""
   sleep 2
   install_package "powerpill" "plank plank-config"
+  return 0
+}
+
+function install_archey() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing ArchEY!       ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  install_package "yaourt" "archey"
   return 0
 }
 
