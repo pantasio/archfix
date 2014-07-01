@@ -142,7 +142,6 @@ function choise_menu() {
 
 function unset_menu_items() {
   unset CHOISE_ARRAY
-  declare -A CHOISE_ARRAY
 }
 
 
