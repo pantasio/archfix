@@ -69,8 +69,8 @@ function first_choise() {
     unset_menu_items
     optimize_mirrorlist
     install_yaourt
-    adduser
     user_config
+    adduser
     install_powerpill
     install_compress_tools
     install_alsa
@@ -86,6 +86,10 @@ function first_choise() {
     install_cups
     install_xfce
     install_lightdm
+
+    #clean package cache
+    pacman -Scc --noconfirm
+
     install_plank
     install_archey
     install_libreoffice
@@ -96,8 +100,17 @@ function first_choise() {
     install_gtk3_system_apps
     install_audio_tools_and_codec
     install_video_tools_and_codec
+
+    #clean package cache
+    pacman -Scc --noconfirm
+
     install_fonts
     install_internet_tools
+
+    #clean package cache
+    pacman -Scc --noconfirm
+
+    
   fi
   
   return 0
@@ -611,7 +624,6 @@ function user_config() {
   git clone https://github.com/memoryleakx/dotfiles.git
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /etc/skel/
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
-  cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /home/${USERNAME}/
   rm -fr dotfiles
   return 0
 }
@@ -740,12 +752,14 @@ function install_video_driver() {
   then
     pacman --noconfirm -Rdds nouveau-dri
     pacman --noconfirm -Rdds mesa-libgl
+   
     install_package "powerpill" "nvidia nvidia-libgl nvidia-utils"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
       pacman --noconfirm -Rdds lib32-nouveau-dri
+      pacman --noconfirm -Rdds lib32-mesa-libgl 
       install_package "powerpill" "lib32-nvidia-utils"
       install_package "powerpill" "lib32-nvidia-libgl"
     fi
@@ -763,6 +777,7 @@ function install_video_driver() {
     if [[ ${ARCH} == x86_64 ]]
     then
       pacman --noconfirm -Rdds lib32-nouveau-dri
+      pacman --noconfirm -Rdds lib32-mesa-libgl 
       install_package "powerpill" "lib32-nvidia-utils"
       install_package "powerpill" "lib32-nvidia-libgl"
     fi
@@ -917,7 +932,7 @@ function install_inkscape() {
 function install_firewall() {
   clear
   echo "******************************************************"
-  echo "*********     Installing inkscape!     ***************"
+  echo "*********     Installing Firewall!     ***************"
   echo "******************************************************"
   echo ""
   sleep 2
@@ -959,7 +974,8 @@ function install_audio_tools_and_codec() {
   #Codecs
   install_package "powerpill" "gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gstreamer0.10 gstreamer0.10-plugins"
   #Tools
-  install_package "yaourt" "spotify radiotray"
+  install_package "yaourt" "spotify"
+  install_package "yaourt" "radiotray"
   return 0
 }
 
