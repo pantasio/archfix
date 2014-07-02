@@ -16,7 +16,7 @@
 # from; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place, Suite 330, Boston, MA  02111-1307   USA
 #
-# my personal Arch Linux Installation script 
+# my personal Arch Linux Installation script
 # Version Alpha 2
 
 RESULT=0
@@ -54,7 +54,7 @@ function first_choise() {
   echo "************************************************"
   echo ""
   message_print 0 "This script comes with no warranty …use at own risk"
-
+  
   echo ""
   echo "Whitch Step you want to execute now"
   CHOISE_ARRAY[0]="The first part partitioned your hard drive and install the base system"
@@ -62,40 +62,44 @@ function first_choise() {
   choise_menu
   if [ $RESULT -eq 1 ]
   then
-   unset_menu_items
-   partitioning
-   install_base
+    unset_menu_items
+    partitioning
+    install_base
   else
-   unset_menu_items
-   optimize_mirrorlist
-   install_yaourt
-   adduser
-   user_config
-   install_powerpill
-   install_compress_tools
-   install_alsa
-   install_pulse
-   install_bash_goodies
-   install_avahi_deamon
-   install_ntfs_tools
-   install_openssh
-   readahead_on
-   install_xserver
-   install_infinality_font_config
-   install_video_driver
-   install_cups
-   install_xfce
-   install_lightdm
-   install_plank
-   install_archey
-   install_libreoffice
-   install_gimp
-   install_inkscape
-   install_firewall
-   install_gaming_stuff
-   install_gtk3_system_apps
+    unset_menu_items
+    optimize_mirrorlist
+    install_yaourt
+    adduser
+    user_config
+    install_powerpill
+    install_compress_tools
+    install_alsa
+    install_pulse
+    install_bash_goodies
+    install_avahi_deamon
+    install_ntfs_tools
+    install_openssh
+    readahead_on
+    install_xserver
+    install_infinality_font_config
+    install_video_driver
+    install_cups
+    install_xfce
+    install_lightdm
+    install_plank
+    install_archey
+    install_libreoffice
+    install_gimp
+    install_inkscape
+    install_firewall
+    install_gaming_stuff
+    install_gtk3_system_apps
+    install_audio_tools_and_codec
+    install_video_tools_and_codec
+    install_fonts
+    install_internet_tools
   fi
-
+  
   return 0
 }
 
@@ -162,14 +166,14 @@ function stop_spinner() {
 function start_spinner() {
   setterm -cursor off
   parts=( "|" "/" "-" "\\" )
-
+  
   while [ 1 ];
   do
-    for ix in 0 1 2 3; 
+    for ix in 0 1 2 3;
     do
-     echo -en ${parts[$ix]}
-     sleep .1
-     echo -en "\b"
+      echo -en ${parts[$ix]}
+      sleep .1
+      echo -en "\b"
     done
   done
 }
@@ -177,66 +181,66 @@ function start_spinner() {
 function spinner()  {
   if [ $1 == "start" ];
   then
-   if [ $PID -eq 0 ];
-   then
-   start_spinner&
-   PID=$!
-   fi
+    if [ $PID -eq 0 ];
+    then
+      start_spinner&
+      PID=$!
+    fi
   elif [ $1 == "stop" ];
   then
-   if [ $PID -ne 0 ];
-   then
-   stop_spinner
-   fi
+    if [ $PID -ne 0 ];
+    then
+      stop_spinner
+    fi
   fi
 }
 
 function add_module() {
-    # thanks to 
-    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
-    for MODULE in $1; do
-      [[ $# -lt 2 ]] && MODULE_NAME="$MODULE" || MODULE_NAME="$2";
-      echo "$MODULE" >> /etc/modules-load.d/$MODULE_NAME.conf
-      modprobe "$MODULE"
-    done
+  # thanks to
+  # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+  for MODULE in $1; do
+    [[ $# -lt 2 ]] && MODULE_NAME="$MODULE" || MODULE_NAME="$2";
+    echo "$MODULE" >> /etc/modules-load.d/$MODULE_NAME.conf
+    modprobe "$MODULE"
+  done
 }
 
 function add_key() {
-    # thanks to 
-    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
-    pacman-key -r $1
-    pacman-key --lsign-key $1
+  # thanks to
+  # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+  pacman-key -r $1
+  pacman-key --lsign-key $1
 }
 
 
-function add_repository() { 
-    # thanks to 
-    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
-    REPO=${1}
-    URL=${2}
-    [[ -n ${3} ]] && SIGLEVEL="\nSigLevel = ${3}" || SIGLEVEL=""
-
-    CHECK_REPO=`grep -F "${REPO}" /etc/pacman.conf`
-    if [[ -z $CHECK_REPO ]]; then
-      echo -e "\n[${REPO}]${SIGLEVEL}\nServer = ${URL}" >> /etc/pacman.conf
-      pacman -Syy
-    fi
+function add_repository() {
+  # thanks to
+  # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+  REPO=${1}
+  URL=${2}
+  [[ -n ${3} ]] && SIGLEVEL="\nSigLevel = ${3}" || SIGLEVEL=""
+  
+  CHECK_REPO=`grep -F "${REPO}" /etc/pacman.conf`
+  if [[ -z $CHECK_REPO ]]; then
+    echo -e "\n[${REPO}]${SIGLEVEL}\nServer = ${URL}" >> /etc/pacman.conf
+    pacman -Syy
+  fi
 }
 
 function replace_line() {
-    # thanks to 
-    # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
-    SEARCH=${1}
-    REPLACE=${2}
-    FILEPATH=${3}
-    FILEBASE=`basename ${3}`
-
-    sed -e "s/${SEARCH}/${REPLACE}/" ${FILEPATH} > /tmp/${FILEBASE} 2>"$LOG"
-    if [[ ${?} -eq 0 ]]; then
-      mv /tmp/${FILEBASE} ${FILEPATH}
-    else
-      echo "failed: ${SEARCH} - ${FILEPATH}"
-    fi
+  # thanks to
+  # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
+  SEARCH=${1}
+  REPLACE=${2}
+  FILEPATH=${3}
+  FILEBASE=`basename ${3}`
+  
+  sed -e "s/${SEARCH}/${REPLACE}/" ${FILEPATH} > /tmp/${FILEBASE} 2>"$LOG"
+  if [[ ${?} -eq 0 ]]; then
+    mv /tmp/${FILEBASE} ${FILEPATH}
+  else
+    echo "failed: ${SEARCH} - ${FILEPATH}"
+  fi
 }
 
 function get_total_hdd_size() {
@@ -306,7 +310,7 @@ function partitioning() {
   ROOT_SIZE=$(($ROOT_SIZE * 1024))
   HOME_SIZE=$(($HOME_SIZE * 1024))
   SWAP_SIZE=$(($SWAP_SIZE * 1024))
-
+  
   #Wiping the entire disk
   dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
   
@@ -333,7 +337,7 @@ function partitioning() {
   mkdir /mnt/home
   mount $HDD_NAME'1' /mnt/boot
   mount $HDD_NAME'4' /mnt/home
-
+  
   #clean
   unset_menu_items
   return 0
@@ -356,7 +360,7 @@ function install_base() {
   arch_chroot 'rm -rf /etc/locale.gen'
   arch_chroot 'touch /etc/locale.gen'
   echo $LANGUAGE'.UTF-8 UTF-8' > /mnt/etc/locale.gen
-
+  
   #Set locales
   #Steam workaround
   if [ $LANGUAGE = "en_US" ]
@@ -368,10 +372,10 @@ function install_base() {
   
   #create locales
   arch_chroot 'locale-gen'
-
+  
   #Install extra system stuff
   arch_chroot "pacman --noconfirm -S networkmanager sudo wpa_supplicant"
-
+  
   #enable NetworkManager
   arch_chroot 'systemctl enable NetworkManager.service'
   
@@ -380,7 +384,7 @@ function install_base() {
   ARCH=$(uname -m)
   if [ $ARCH = "x86_64" ]
   then
-   MULTILIB=`grep -n "\[multilib\]" /mnt/etc/pacman.conf | cut -f1 -d:`
+    MULTILIB=`grep -n "\[multilib\]" /mnt/etc/pacman.conf | cut -f1 -d:`
     if [ -z $MULTILIB ]
     then
       echo -e "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
@@ -395,15 +399,15 @@ function install_base() {
   
   #create Linux Kernel
   arch_chroot 'mkinitcpio -p linux'
-
+  
   #configure Clock
   arch_chroot "hwclock --systohc --utc"
-
+  
   #accountsservice Lightdm bugFix
   arch_chroot "pacman --noconfirm -S accountsservice"
   #git
   arch_chroot "pacman --noconfirm -S git"
-
+  
   #Enable Grub
   arch_chroot 'pacman --noconfirm -S grub'
   echo "" >> /mnt/etc/default/grub
@@ -414,13 +418,13 @@ function install_base() {
   
   #SET Root password
   arch_chroot 'passwd'
-
+  
   mv archfix /mnt/root/archfix
   
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
   umount $HDD_NAME'4'
-
+  
   reboot #<< end
   return 0
 }
@@ -435,14 +439,14 @@ function optimize_mirrorlist() {
   message_print 0 "*******please wait, this will take a few minutes!*****"
   message_print 0 "******************************************************"
   echo ""
-
+  
   TFILE="/tmp/mirrorlist.tmp"
   CCODE=${LANGUAGE:3:2}
   URL="https://www.archlinux.org/mirrorlist/?country=${CCODE}&use_mirror_status=on"
-
+  
   curl -so ${TFILE} ${URL}
   sed -i 's/^#Server/Server/g' ${TFILE}
-
+  
   echo -n " [working]... "
   spinner "start"
   rankmirrors -n 6 $TFILE > /etc/pacman.d/mirrorlist
@@ -450,7 +454,7 @@ function optimize_mirrorlist() {
   spinner "stop"
   echo "";
   echo "";
-
+  
   pacman -Syy
   return 0
 }
@@ -461,54 +465,54 @@ function install_yaourt() {
   echo "***************   Installing YAOURT!   ***************"
   echo "******************************************************"
   echo ""
-
+  
   cd /tmp
   echo "Retrieving package-query ..."
   curl -O https://aur.archlinux.org/packages/pa/package-query/package-query.tar.gz
   echo "Retrieving yaourt ..."
   curl -O https://aur.archlinux.org/packages/ya/yaourt/yaourt.tar.gz
-
+  
   echo "Uncompressing package-query ..."
   tar zxvf package-query.tar.gz
   cd package-query
   echo "Installing package-query ..."
   makepkg -si --asroot --noconfirm
-
+  
   cd ..
-
+  
   echo "Uncompressing yaourt ..."
   tar zxvf yaourt.tar.gz
   cd yaourt
   echo "Installing yaourt ..."
   makepkg -si --asroot --noconfirm
-
+  
   cd ..
-
+  
   rm -rf package-query
   rm -rf yaourt
   rm -rf package-query.tar.gz
   rm -rf yaourt.tar.gz
-
+  
   cd
   return 0
 }
 
 function install_package() {
   case "$1" in
-   "pacman")
-    pacman --noconfirm --needed -S ${2}
+    "pacman")
+      pacman --noconfirm --needed -S ${2}
     ;;
-   "yaourt")
-    su - ${USERNAME} -c ' yaourt --noconfirm -S '${2}
+    "yaourt")
+      su - ${USERNAME} -c ' yaourt --noconfirm -S '${2}
     ;;
     "powerpill")
-    powerpill --noconfirm --needed -S ${2}
+      powerpill --noconfirm --needed -S ${2}
     ;;
-   *)
-    echo ''
+    *)
+      echo ''
     ;;
   esac
-
+  
   return 0
 }
 
@@ -527,7 +531,7 @@ function adduser() {
   message_print 0 "******************************************************"
   echo ""
   passwd $USERNAME
-
+  
   ## Uncomment to allow members of group wheel to execute any command
   sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
   return 0
@@ -654,7 +658,7 @@ function readahead_on() {
   echo "*********      enable readahead  !     ***************"
   echo "******************************************************"
   echo ""
-
+  
   systemctl enable systemd-readahead-collect
   systemctl enable systemd-readahead-replay
 }
@@ -673,13 +677,13 @@ function install_xserver() {
   
   #X Server Keyboard layout
   CCODE=${LANGUAGE:0:2}
-  touch /etc/X11/xorg.conf.d/20-keyboard.conf 
-  echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
-  echo '       Identifier "keyboard"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
-  echo '       MatchIsKeyboard "yes"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
-  echo '       Option "XkbLayout" "'$CCODE'"' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
-  echo 'EndSection' >> /etc/X11/xorg.conf.d/20-keyboard.conf 
-
+  touch /etc/X11/xorg.conf.d/20-keyboard.conf
+  echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  echo '       Identifier "keyboard"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  echo '       MatchIsKeyboard "yes"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  echo '       Option "XkbLayout" "'$CCODE'"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  echo 'EndSection' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  
   return 0
 }
 
@@ -694,10 +698,10 @@ function install_infinality_font_config() {
   add_key "962DDE58"
   add_repository "infinality-bundle" "http://bohoomil.com/repo/\$arch"
   [[ $ARCH == x86_64 ]] && add_repository "infinality-bundle-multilib" "http://bohoomil.com/repo/multilib/\$arch"
-
+  
   pacman --noconfirm -Rdds freetype2 fontconfig cairo
   pacman --noconfirm -Rdds freetype2-ubuntu fontconfig-ubuntu cairo-ubuntu
-
+  
   pacman --noconfirm --needed -S infinality-bundle
   [[ $ARCH == x86_64 ]] && pacman --noconfirm --needed -S infinality-bundle-multilib
   
@@ -722,16 +726,16 @@ function install_video_driver() {
   echo "******************************************************"
   echo ""
   ARCH=$(uname -m)
-
-
+  
+  
   echo "Please select your Video Card"
   CHOISE_ARRAY[0]="NVIDIA"
   CHOISE_ARRAY[1]="bumblebee"
   CHOISE_ARRAY[2]="Catalyst"
   CHOISE_ARRAY[3]="VirtualBox"
-
+  
   choise_menu
-
+  
   if [ $RESULT -eq 1 ] #NVIDIA
   then
     pacman --noconfirm -Rdds nouveau-dri
@@ -741,14 +745,14 @@ function install_video_driver() {
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
-    	pacman --noconfirm -Rdds lib32-nouveau-dri
-    	install_package "powerpill" "lib32-nvidia-utils"
-        install_package "powerpill" "lib32-nvidia-libgl"
+      pacman --noconfirm -Rdds lib32-nouveau-dri
+      install_package "powerpill" "lib32-nvidia-utils"
+      install_package "powerpill" "lib32-nvidia-libgl"
     fi
     mkinitcpio -p linux
     nvidia-xconfig --add-argb-glx-visuals --allow-glx-with-composite --composite -no-logo --render-accel -o /etc/X11/xorg.conf.d/20-nvidia.conf;
   fi
-
+  
   if [ $RESULT -eq 2 ] #bumblebee
   then
     pacman --noconfirm -Rdds nouveau-dri
@@ -758,20 +762,20 @@ function install_video_driver() {
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
-    	pacman --noconfirm -Rdds lib32-nouveau-dri
-    	install_package "powerpill" "lib32-nvidia-utils"
-        install_package "powerpill" "lib32-nvidia-libgl"
+      pacman --noconfirm -Rdds lib32-nouveau-dri
+      install_package "powerpill" "lib32-nvidia-utils"
+      install_package "powerpill" "lib32-nvidia-libgl"
     fi
     replace_line '*options nouveau modeset=1' '#options nouveau modeset=1' /etc/modprobe.d/modprobe.conf
     replace_line '*MODULES="nouveau"' '#MODULES="nouveau"' /etc/mkinitcpio.conf
     mkinitcpio -p linux
     gpasswd -a ${USERNAME} bumblebee
   fi
-
+  
   if [ $RESULT -eq 3 ] #Catalyst
   then
     pacman --noconfirm -Rdds ati-dri
-   [[ -f /etc/modules-load.d/ati.conf ]] && rm /etc/modules-load.d/ati.conf
+    [[ -f /etc/modules-load.d/ati.conf ]] && rm /etc/modules-load.d/ati.conf
     if [[ ${ARCHI} == x86_64 ]]; then
       pacman --noconfirm -Rdds lib32-ati-dri
     fi
@@ -781,19 +785,19 @@ function install_video_driver() {
     systemctl enable atieventsd
     systemctl enable catalyst-hook
     systemctl enable temp-links-catalyst
-   
+    
   fi
-
+  
   if [ $RESULT -eq 4 ] #VirtualBox
   then
-   install_package "powerpill" "virtualbox-guest-utils"
-   install_package "powerpill" "mesa-libgl"
-   add_module "vboxguest vboxsf vboxvideo" "virtualbox-guest"
-   gpasswd -a ${USERNAME} vboxsf
-   systemctl disable ntpd
-   systemctl enable vboxservice
+    install_package "powerpill" "virtualbox-guest-utils"
+    install_package "powerpill" "mesa-libgl"
+    add_module "vboxguest vboxsf vboxvideo" "virtualbox-guest"
+    gpasswd -a ${USERNAME} vboxsf
+    systemctl disable ntpd
+    systemctl enable vboxservice
   fi
-
+  
   #clean
   unset_menu_items
   return 0
@@ -829,11 +833,12 @@ function install_xfce() {
   install_package "yaourt" "pa-applet-git"
   install_package "yaourt" "xfce4-whiskermenu-plugin"
   install_package "powerpill" "light-locker"
-
+  install_package "powerpill" "network-manager-applet"
+  
   cp -fv /etc/skel/.xinitrc /home/${USERNAME}/
   echo -e "exec startxfce4" >> /home/${USERNAME}/.xinitrc
   chown -R ${USERNAME}:users /home/${USERNAME}/.xinitrc
-
+  
   return 0
 }
 
@@ -942,6 +947,61 @@ function install_gtk3_system_apps() {
   pacman --noconfirm -Rns mousepad xfce4-taskmanager
   install_package "powerpill" "gedit gedit-plugins gnome-system-monitor"
   return 0
+}
+
+function install_audio_tools_and_codec() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing Audio Tools!         **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  #Codecs
+  install_package "powerpill" "gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gstreamer0.10 gstreamer0.10-plugins"
+  #Tools
+  install_package "yaourt" "spotify radiotray"
+  return 0
+}
+
+function install_video_tools_and_codec() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing Video Tools!         **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  #Codecs
+  package_install "libquicktime libdvdread libdvdnav libdvdcss cdrdao"
+  #Tools
+  install_package "powerpill" "parole openshot"
+  return 0
+}
+
+function install_fonts() {
+  clear
+  echo "******************************************************"
+  echo "*********      Installing Fonts!            **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  pacman --noconfirm -Rns ttf-droid
+  pacman --noconfirm -Rns ttf-roboto
+  pacman --noconfirm -Rns ttf-ubuntu-font-family
+  pacman --noconfirm -Rns otf-oswald-ib
+  install_package "yaourt" "ttf-google-fonts-git"
+  install_package "yaourt" "ttf-ms-fonts"
+}
+
+function install_internet_tools() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing Internet Tools!    **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  CCODE=${LANGUAGE:0:2}
+  install_package "yaourt" "google-chrome"
+  install_package "powerpill" "thunderbird thunderbird-i18n-"$CCODE
 }
 
 
