@@ -507,6 +507,15 @@ function install_yaourt() {
   rm -rf yaourt.tar.gz
   
   cd
+
+  mkdir /var/cache/yaourt
+  chmod 775 /var/cache/yaourt/
+  chown root:users /var/cache/yaourt/
+
+  touch /etc/yaourtrc
+  echo 'EXPORT=1' >> /etc/yaourtrc
+  echo 'EXPORTDIR="/var/cache/yaourt"' >> /etc/yaourtrc
+
   return 0
 }
 
