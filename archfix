@@ -86,10 +86,10 @@ function first_choise() {
     install_cups
     install_xfce
     install_lightdm
-
+    
     #clean package cache
     pacman -Scc --noconfirm
-
+    
     install_plank
     install_archey
     install_libreoffice
@@ -100,14 +100,14 @@ function first_choise() {
     install_extra_gtk_apps
     install_audio_tools_and_codec
     install_video_tools_and_codec
-
+    
     #clean package cache
     pacman -Scc --noconfirm
-
+    
     install_fonts
     install_internet_tools
     install_plymouth
-
+    
     #clean package cache
     pacman -Scc --noconfirm
     resecure_sudoers
@@ -167,6 +167,7 @@ function choise_menu() {
 function unset_menu_items() {
   unset CHOISE_ARRAY
   declare -a CHOISE_ARRAY
+  return 0
 }
 
 
@@ -174,6 +175,7 @@ function stop_spinner() {
   kill -s SIGHUP $PID &
   { wait $PID; } &> /dev/null
   PID=0
+  return 0
 }
 
 function start_spinner() {
@@ -189,6 +191,7 @@ function start_spinner() {
       echo -en "\b"
     done
   done
+  return 0
 }
 
 function spinner()  {
@@ -206,6 +209,7 @@ function spinner()  {
       stop_spinner
     fi
   fi
+  return 0
 }
 
 function add_module() {
@@ -216,6 +220,7 @@ function add_module() {
     echo "$MODULE" >> /etc/modules-load.d/$MODULE_NAME.conf
     modprobe "$MODULE"
   done
+  return 0
 }
 
 function add_key() {
@@ -223,6 +228,7 @@ function add_key() {
   # https://github.com/helmuthdu/aui/blob/master/sharedfuncs
   pacman-key -r $1
   pacman-key --lsign-key $1
+  return 0
 }
 
 
@@ -238,6 +244,7 @@ function add_repository() {
     echo -e "\n[${REPO}]${SIGLEVEL}\nServer = ${URL}" >> /etc/pacman.conf
     pacman -Syy
   fi
+  return 0
 }
 
 function replace_line() {
@@ -254,13 +261,15 @@ function replace_line() {
   else
     echo "failed: ${SEARCH} - ${FILEPATH}"
   fi
+  return 0
 }
 
 # Define method to add hooks after a hook to the mkinitcpio configuration.
 function add_hook_after() {
-    #thanks to
-    #https://github.com/concordusapps/keystone/blob/master/blocks/core/mkinitcpio.sh
-    sed -i -e "/^$1/$1 $2/s" -e //N -e //N /etc/mkinitcpio.conf
+  #thanks to
+  #https://github.com/concordusapps/keystone/blob/master/blocks/core/mkinitcpio.sh
+  sed -i -e "/^$1/$1 $2/s" -e //N -e //N /etc/mkinitcpio.conf
+  return 0
 }
 
 function get_total_hdd_size() {
@@ -298,6 +307,7 @@ function calc_optimal_patition_size() {
 
 function arch_chroot() {
   arch-chroot $ARCH_ROOT /bin/bash -c "${1}"
+  return 0
 }
 
 function partitioning() {
@@ -514,15 +524,15 @@ function install_yaourt() {
   rm -rf yaourt.tar.gz
   
   cd
-
+  
   mkdir /var/cache/yaourt
   chmod 775 /var/cache/yaourt/
   chown root:users /var/cache/yaourt/
-
+  
   touch /etc/yaourtrc
   echo 'EXPORT=1' >> /etc/yaourtrc
   echo 'EXPORTDIR="/var/cache/yaourt"' >> /etc/yaourtrc
-
+  
   return 0
 }
 
@@ -562,13 +572,13 @@ function adduser() {
   passwd $USERNAME
   
   ## Uncomment to allow members of group wheel to execute any command
-   sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^#//' /etc/sudoers
+  sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^#//' /etc/sudoers
   return 0
 }
 
 function resecure_sudoers(){
-   sed -i "/%wheel ALL=(ALL) NOPASSWD: ALL/s/^\(.*\)/#\1/g"  /etc/sudoers
-   sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
+  sed -i "/%wheel ALL=(ALL) NOPASSWD: ALL/s/^\(.*\)/#\1/g"  /etc/sudoers
+  sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
 }
 
 function install_powerpill() {
@@ -579,8 +589,17 @@ function install_powerpill() {
   echo ""
   sleep 2
   install_package "yaourt" "powerpill"
+  
+  echo -n " [updating powerpill]... "
+  spinner "start"
+
   reflector -p rsync -f n -l m
   powerpill -Syu
+
+  spinner "stop"
+  echo ""
+  echo ""
+
   return 0
 }
 
@@ -773,7 +792,7 @@ function install_video_driver() {
   then
     pacman --noconfirm -Rdds nouveau-dri
     pacman --noconfirm -Rdds mesa-libgl
-    pacman --noconfirm -Rdds lib32-mesa-libgl 
+    pacman --noconfirm -Rdds lib32-mesa-libgl
     install_package "powerpill" "nvidia nvidia-libgl nvidia-utils opencl-nvidia"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
@@ -792,7 +811,7 @@ function install_video_driver() {
   then
     pacman --noconfirm -Rdds nouveau-dri
     pacman --noconfirm -Rdds mesa-libgl
-    pacman --noconfirm -Rdds lib32-mesa-libgl 
+    pacman --noconfirm -Rdds lib32-mesa-libgl
     install_package "powerpill" "xf86-video-intel bumblebee nvidia nvidia-libgl nvidia-utils opencl-nvidia"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
@@ -880,7 +899,7 @@ function install_xfce() {
   rm -rf /usr/share/backgrounds/xfce
   curl -O  http://fc01.deviantart.net/fs71/f/2014/081/b/e/arch_creative_construction_zone_by_memoryleakxxx-d7b6288.png
   mv arch_creative_construction_zone_by_memoryleakxxx-d7b6288.png /usr/share/backgrounds/archbg.png
-
+  
   return 0
 }
 
@@ -1039,6 +1058,7 @@ function install_fonts() {
   pacman --noconfirm -Rns otf-oswald-ib
   install_package "yaourt" "ttf-google-fonts-git"
   install_package "yaourt" "ttf-ms-fonts"
+  return 0
 }
 
 function install_internet_tools() {
@@ -1051,6 +1071,7 @@ function install_internet_tools() {
   CCODE=${LANGUAGE:0:2}
   install_package "yaourt" "google-chrome"
   install_package "powerpill" "thunderbird thunderbird-i18n-"$CCODE
+  return 0
 }
 
 function install_plymouth() {
@@ -1067,6 +1088,7 @@ function install_plymouth() {
   sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/g' /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
   systemctl enable lightdm-plymouth.service
+  return 0
 }
 
 
