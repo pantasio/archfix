@@ -1105,7 +1105,7 @@ function install_plymouth() {
   sleep 2
   install_package "yaourt" "plymouth"
   install_package "yaourt" "plymouth-theme-arch-logo"
-  sed -i 's/udev autodetect/udev plymouth autodetect"/g' /etc/mkinitcpio.conf
+  sed -i 's/udev autodetect/udev plymouth autodetect/g' /etc/mkinitcpio.conf
   plymouth-set-default-theme -R arch-logo
   sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/g' /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
