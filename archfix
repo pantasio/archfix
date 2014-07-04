@@ -665,6 +665,7 @@ function user_config() {
   sleep 2
   git clone https://github.com/memoryleakx/dotfiles.git
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /etc/skel/
+  cp -r dotfiles/.config/ /etc/skel/
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
   rm -rf dotfiles
   return 0
