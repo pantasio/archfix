@@ -98,6 +98,7 @@ function first_choise() {
     install_firewall
     install_gaming_stuff
     install_extra_gtk_apps
+    install_extra_qt_apps
     install_audio_tools_and_codec
     install_video_tools_and_codec
     
@@ -105,6 +106,7 @@ function first_choise() {
     pacman -Scc --noconfirm
     
     install_fonts
+    install_java
     install_internet_tools
     install_plymouth
     
@@ -592,14 +594,14 @@ function install_powerpill() {
   
   echo -n " [updating powerpill]... "
   spinner "start"
-
+  
   reflector -p rsync -f n -l m
   powerpill -Syu
-
+  
   spinner "stop"
   echo ""
   echo ""
-
+  
   return 0
 }
 
@@ -949,7 +951,7 @@ function install_libreoffice() {
   echo ""
   sleep 2
   CCODE=${LANGUAGE:0:2}
-  install_package "powerpill" "libreoffice-base libreoffice-common libreoffice-calc libreoffice-writer"
+  install_package "powerpill" "libreoffice-common libreoffice-calc libreoffice-writer"
   install_package "powerpill" "libreoffice-gnome hunspell hunspell-"$CCODE" libreoffice-"$CCODE
   return 0
 }
@@ -1015,6 +1017,18 @@ function install_extra_gtk_apps() {
   return 0
 }
 
+function install_extra_qt_apps() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing QT Apps!             **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  install_package "powerpill" "qtcreator gdb"
+  install_package "powerpill" "keepassx"
+  return 0
+}
+
 function install_audio_tools_and_codec() {
   clear
   echo "******************************************************"
@@ -1071,6 +1085,17 @@ function install_internet_tools() {
   CCODE=${LANGUAGE:0:2}
   install_package "yaourt" "google-chrome"
   install_package "powerpill" "thunderbird thunderbird-i18n-"$CCODE
+  return 0
+}
+
+function install_java() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing Java!              **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  install_package "powerpill" "jre7-openjdk icedtea-web-java7"
   return 0
 }
 
