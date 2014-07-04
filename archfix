@@ -81,8 +81,8 @@ function first_choise() {
     install_openssh
     readahead_on
     install_xserver
-    install_infinality_font_config
     install_video_driver
+    install_infinality_font_config
     install_cups
     install_xfce
     install_lightdm
@@ -113,6 +113,10 @@ function first_choise() {
     #clean package cache
     pacman -Scc --noconfirm
     resecure_sudoers
+    clear
+    echo "finished!....."
+    sleep 2
+    reboot
   fi
   
   return 0
@@ -263,14 +267,6 @@ function replace_line() {
   else
     echo "failed: ${SEARCH} - ${FILEPATH}"
   fi
-  return 0
-}
-
-# Define method to add hooks after a hook to the mkinitcpio configuration.
-function add_hook_after() {
-  #thanks to
-  #https://github.com/concordusapps/keystone/blob/master/blocks/core/mkinitcpio.sh
-  sed -i -e "/^$1/$1 $2/s" -e //N -e //N /etc/mkinitcpio.conf
   return 0
 }
 
@@ -1109,7 +1105,7 @@ function install_plymouth() {
   sleep 2
   install_package "yaourt" "plymouth"
   install_package "yaourt" "plymouth-theme-arch-logo"
-  add_hook_after "udev" "plymouth"
+  sed -i 's/udev autodetect/udev plymouth autodetect"/g' /etc/mkinitcpio.conf
   plymouth-set-default-theme -R arch-logo
   sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/g' /etc/default/grub
   grub-mkconfig -o /boot/grub/grub.cfg
