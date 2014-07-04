@@ -97,7 +97,7 @@ function first_choise() {
     install_inkscape
     install_firewall
     install_gaming_stuff
-    install_gtk3_system_apps
+    install_extra_gtk_apps
     install_audio_tools_and_codec
     install_video_tools_and_codec
 
@@ -106,11 +106,11 @@ function first_choise() {
 
     install_fonts
     install_internet_tools
+    install_plymouth
 
     #clean package cache
     pacman -Scc --noconfirm
-
-    
+    resecure_sudoers
   fi
   
   return 0
@@ -254,6 +254,13 @@ function replace_line() {
   else
     echo "failed: ${SEARCH} - ${FILEPATH}"
   fi
+}
+
+# Define method to add hooks after a hook to the mkinitcpio configuration.
+function add_hook_after() {
+    #thanks to
+    #https://github.com/concordusapps/keystone/blob/master/blocks/core/mkinitcpio.sh
+    sed -i -e "/^$1/$1 $2/s" -e //N -e //N /etc/mkinitcpio.conf
 }
 
 function get_total_hdd_size() {
@@ -555,8 +562,13 @@ function adduser() {
   passwd $USERNAME
   
   ## Uncomment to allow members of group wheel to execute any command
-  sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
+   sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/s/^#//' /etc/sudoers
   return 0
+}
+
+function resecure_sudoers(){
+   sed -i "/%wheel ALL=(ALL) NOPASSWD: ALL/s/^\(.*\)/#\1/g"  /etc/sudoers
+   sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
 }
 
 function install_powerpill() {
@@ -604,7 +616,7 @@ function install_pulse() {
   echo ""
   sleep 2
   ARCH=$(uname -m)
-  install_package "powerpill" "pulseaudio pulseaudio-alsa"
+  install_package "powerpill" "pulseaudio pulseaudio-alsa pavucontrol"
   [[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-libpulse"
   echo "load-module module-switch-on-connect" >> /etc/pulse/default.pa
   return 0
@@ -633,7 +645,7 @@ function user_config() {
   git clone https://github.com/memoryleakx/dotfiles.git
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc /etc/skel/
   cp dotfiles/.bashrc dotfiles/.dircolors dotfiles/.dircolors_256 dotfiles/.nanorc dotfiles/.yaourtrc ~/
-  rm -fr dotfiles
+  rm -rf dotfiles
   return 0
 }
 
@@ -761,16 +773,16 @@ function install_video_driver() {
   then
     pacman --noconfirm -Rdds nouveau-dri
     pacman --noconfirm -Rdds mesa-libgl
-   
-    install_package "powerpill" "nvidia nvidia-libgl nvidia-utils"
+    pacman --noconfirm -Rdds lib32-mesa-libgl 
+    install_package "powerpill" "nvidia nvidia-libgl nvidia-utils opencl-nvidia"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
       pacman --noconfirm -Rdds lib32-nouveau-dri
-      pacman --noconfirm -Rdds lib32-mesa-libgl 
       install_package "powerpill" "lib32-nvidia-utils"
       install_package "powerpill" "lib32-nvidia-libgl"
+      install_package "powerpill" "lib32-opencl-nvidia"
     fi
     mkinitcpio -p linux
     nvidia-xconfig --add-argb-glx-visuals --allow-glx-with-composite --composite -no-logo --render-accel -o /etc/X11/xorg.conf.d/20-nvidia.conf;
@@ -780,15 +792,16 @@ function install_video_driver() {
   then
     pacman --noconfirm -Rdds nouveau-dri
     pacman --noconfirm -Rdds mesa-libgl
-    install_package "powerpill" "xf86-video-intel bumblebee nvidia nvidia-libgl nvidia-utils"
+    pacman --noconfirm -Rdds lib32-mesa-libgl 
+    install_package "powerpill" "xf86-video-intel bumblebee nvidia nvidia-libgl nvidia-utils opencl-nvidia"
     install_package "powerpill" "pangox-compat"
     install_package "powerpill" "libva-vdpau-driver"
     if [[ ${ARCH} == x86_64 ]]
     then
       pacman --noconfirm -Rdds lib32-nouveau-dri
-      pacman --noconfirm -Rdds lib32-mesa-libgl 
       install_package "powerpill" "lib32-nvidia-utils"
       install_package "powerpill" "lib32-nvidia-libgl"
+      install_package "powerpill" "lib32-opencl-nvidia"
     fi
     replace_line '*options nouveau modeset=1' '#options nouveau modeset=1' /etc/modprobe.d/modprobe.conf
     replace_line '*MODULES="nouveau"' '#MODULES="nouveau"' /etc/mkinitcpio.conf
@@ -863,6 +876,11 @@ function install_xfce() {
   echo -e "exec startxfce4" >> /home/${USERNAME}/.xinitrc
   chown -R ${USERNAME}:users /home/${USERNAME}/.xinitrc
   
+  cd
+  rm -rf /usr/share/backgrounds/xfce
+  curl -O  http://fc01.deviantart.net/fs71/f/2014/081/b/e/arch_creative_construction_zone_by_memoryleakxxx-d7b6288.png
+  mv arch_creative_construction_zone_by_memoryleakxxx-d7b6288.png /usr/share/backgrounds/archbg.png
+
   return 0
 }
 
@@ -874,7 +892,10 @@ function install_lightdm() {
   echo ""
   sleep 2
   install_package "powerpill" "lightdm lightdm-gtk3-greeter"
-  systemctl enable lightdm
+  cd
+  rm -rf /etc/lightdm/lightdm-gtk-greeter.conf
+  curl -O  https://gist.githubusercontent.com/memoryleakx/a4b35ab3901241128d3e/raw/f5a95f823bf5871dd65059f8971977203640275f/lightdm-gtk-greeter.conf
+  mv lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
   return 0
 }
 
@@ -961,15 +982,17 @@ function install_gaming_stuff() {
   return 0
 }
 
-function install_gtk3_system_apps() {
+function install_extra_gtk_apps() {
   clear
   echo "******************************************************"
-  echo "*********   Installing GTK3 System Apps!    **********"
+  echo "*********   Installing GTK Apps!            **********"
   echo "******************************************************"
   echo ""
   sleep 2
   pacman --noconfirm -Rns mousepad xfce4-taskmanager
-  install_package "powerpill" "gedit gedit-plugins gnome-system-monitor"
+  install_package "powerpill" "geany geany-plugins"
+  install_package "yaourt" "geany-themes"
+  install_package "yaourt" "gnome-system-monitor-gtk2"
   return 0
 }
 
@@ -985,6 +1008,7 @@ function install_audio_tools_and_codec() {
   #Tools
   install_package "yaourt" "spotify"
   install_package "yaourt" "radiotray"
+  install_package "powerpill" "ffmpeg-compat"
   return 0
 }
 
@@ -1027,6 +1051,22 @@ function install_internet_tools() {
   CCODE=${LANGUAGE:0:2}
   install_package "yaourt" "google-chrome"
   install_package "powerpill" "thunderbird thunderbird-i18n-"$CCODE
+}
+
+function install_plymouth() {
+  clear
+  echo "******************************************************"
+  echo "*********     Installing Plymouth!          **********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  install_package "yaourt" "plymouth"
+  install_package "yaourt" "plymouth-theme-arch-logo"
+  add_hook_after "udev" "plymouth"
+  plymouth-set-default-theme -R arch-logo
+  sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/g' /etc/default/grub
+  grub-mkconfig -o /boot/grub/grub.cfg
+  systemctl enable lightdm-plymouth.service
 }
 
 
