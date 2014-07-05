@@ -299,7 +299,6 @@ function dokeymap() {
 
 function dolanguage() {
   clear
-  echo "Scanning for keymaps..."
   declare -a COUNTRYCODE
   COUNTRYCODE[0]="en_US"
   COUNTRYCODE[1]="en_GB"
