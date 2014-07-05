@@ -28,10 +28,11 @@ ROOT_SIZE=0
 HOME_SIZE=0
 BOOT_SIZE=200
 PID=0
-HOSTNAME='r2d2'
-LANGUAGE="de_DE"
-KEYMAP="de-latin1"
-TIMEZONE="Europe/Berlin"
+HOSTNAME=''
+LANGUAGE=''
+KEYMAP=''
+ANSWER=''
+TIMEZONE=''
 ARCH=''
 ARCH_ROOT='/mnt'
 USERNAME=''
@@ -63,10 +64,15 @@ function first_choise() {
   if [ $RESULT -eq 1 ]
   then
     unset_menu_items
+    dolanguage
+    dokeymap
+    dotimezone
+    enter_hostname
     partitioning
     install_base
   else
     unset_menu_items
+    load_configs
     optimize_mirrorlist
     install_yaourt
     user_config
@@ -270,6 +276,92 @@ function replace_line() {
   return 0
 }
 
+function dokeymap() {
+  #Thanks to
+  #http://code.metager.de/source/xref/arch/archboot/usr/share/archboot/keymap/km
+  clear
+  echo "Scanning for keymaps..."
+  ANSWER="/tmp/.km"
+  KEYMAPS=
+  for i in $(localectl list-keymaps --no-pager); do
+    KEYMAPS="${KEYMAPS} ${i} -"
+  done
+  CANCEL=""
+  dialog --menu "Select A Keymap" 22 60 16 ${KEYMAPS} 2>${ANSWER} || CANCEL="1"
+  if [[ "${CANCEL}" = "1" ]]; then
+    S_NEXTITEM="1"
+    return 1
+  fi
+  KEYMAP=$(cat ${ANSWER})
+  echo ${KEYMAP} > keymap.config
+  return 0
+}
+
+function dolanguage() {
+  clear
+  echo "Scanning for keymaps..."
+  declare -a COUNTRYCODE
+  COUNTRYCODE[0]="en_US"
+  COUNTRYCODE[1]="en_GB"
+  COUNTRYCODE[2]="fr_FR"
+  COUNTRYCODE[3]="es_ES"
+  COUNTRYCODE[4]="de_DE"
+  
+  ANSWER="/tmp/.ln"
+  COUNTRIES=
+  for i in "${COUNTRYCODE[@]}"; do
+    COUNTRIES="${COUNTRIES} ${i} -"
+  done
+  CANCEL=""
+  dialog --menu "Select A Localisation" 22 60 16 ${COUNTRIES} 2>${ANSWER} || CANCEL="1"
+  if [[ "${CANCEL}" = "1" ]]; then
+    S_NEXTITEM="1"
+    return 1
+  fi
+  LANGUAGE=$(cat ${ANSWER})
+  echo ${LANGUAGE} > locale.config
+  unset COUNTRYCODE
+  return 0
+}
+
+function load_configs() {
+  KEYMAP=$(<keymap.config)
+  TIMEZONE=$(<timezone.config)
+  HOSTNAME=$(<hostname.config)
+  LANGUAGE=$(<locale.config)
+  return 0
+}
+
+function dotimezone() {
+  clear
+  echo "Scanning for timezones..."
+  ANSWER="/tmp/.tz"
+  TIMEZONES=
+  for i in $(timedatectl list-timezones --no-pager); do
+    TIMEZONES="${TIMEZONES} ${i} -"
+  done
+  CANCEL=""
+  dialog --menu "Select A TIMEZONE" 22 60 16 ${TIMEZONES} 2>${ANSWER} || CANCEL="1"
+  if [[ "${CANCEL}" = "1" ]]; then
+    S_NEXTITEM="1"
+    return 1
+  fi
+  TIMEZONE=$(cat ${ANSWER})
+  echo ${TIMEZONE} > timezone.config
+  return 0
+}
+
+function enter_hostname() {
+  clear
+  echo "******************************************************"
+  echo "***********   Please enter the Hostname    ***********"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  read -p "Enter hostname : " HOSTNAME
+  echo ${HOSTNAME} > hostname.config
+}
+
 function get_total_hdd_size() {
   TOTAL_HDD_SIZE=$(fdisk -l $1 |grep "Disk "$1":" | head -n 2 | tail -n 1 | cut -d " " -f 5)
   TOTAL_HDD_SIZE=$(($TOTAL_HDD_SIZE / 1024))
@@ -447,7 +539,9 @@ function install_base() {
   #SET Root password
   arch_chroot 'passwd'
   
-  mv archfix /mnt/root/archfix
+  
+  cd
+  cp -r archfix/ /mnt/root/
   
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
@@ -522,15 +616,6 @@ function install_yaourt() {
   rm -rf yaourt.tar.gz
   
   cd
-  
-  mkdir /var/cache/yaourt
-  chmod 775 /var/cache/yaourt/
-  chown root:users /var/cache/yaourt/
-  
-  touch /etc/yaourtrc
-  echo 'EXPORT=1' >> /etc/yaourtrc
-  echo 'EXPORTDIR="/var/cache/yaourt"' >> /etc/yaourtrc
-  
   return 0
 }
 
