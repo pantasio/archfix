@@ -114,7 +114,6 @@ function first_choise() {
     install_fonts
     install_java
     install_internet_tools
-    install_plymouth
     
     #clean package cache
     pacman -Scc --noconfirm
@@ -1000,6 +999,7 @@ function install_lightdm() {
   rm -rf /etc/lightdm/lightdm-gtk-greeter.conf
   curl -O  https://gist.githubusercontent.com/memoryleakx/a4b35ab3901241128d3e/raw/f5a95f823bf5871dd65059f8971977203640275f/lightdm-gtk-greeter.conf
   mv lightdm-gtk-greeter.conf /etc/lightdm/lightdm-gtk-greeter.conf
+  systemctl enable lightdm
   return 0
 }
 
@@ -1181,25 +1181,6 @@ function install_java() {
   install_package "powerpill" "jre7-openjdk icedtea-web-java7"
   return 0
 }
-
-function install_plymouth() {
-  clear
-  echo "******************************************************"
-  echo "*********     Installing Plymouth!          **********"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  install_package "yaourt" "plymouth"
-  install_package "yaourt" "plymouth-theme-arch-logo"
-  sed -i 's/udev autodetect/udev plymouth autodetect/g' /etc/mkinitcpio.conf
-  plymouth-set-default-theme -R arch-logo
-  sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="quiet"/GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"/g' /etc/default/grub
-  grub-mkconfig -o /boot/grub/grub.cfg
-  systemctl enable lightdm-plymouth.service
-  return 0
-}
-
-
 
 first_choise
 
