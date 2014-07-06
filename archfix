@@ -693,7 +693,7 @@ function install_compress_tools() {
   echo ""
   sleep 2
   install_package "powerpill" "unrar zip p7zip arj unace unzip"
-  install_package "powerpill" "file-roller"
+  install_package "yaourt" "file-roller2-nn"
   return 0
 }
 
@@ -784,6 +784,7 @@ function install_openssh() {
   echo ""
   sleep 2
   install_package "powerpill" "openssh"
+  echo 'eval $(ssh-agent)' >> /etc/profile
   return 0
 }
 
@@ -796,6 +797,7 @@ function readahead_on() {
   
   systemctl enable systemd-readahead-collect
   systemctl enable systemd-readahead-replay
+  return 0
 }
 
 function install_xserver() {
