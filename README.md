@@ -228,3 +228,10 @@ You now have a complete good looking Arch Linux Desktop with basic software need
 For a complete Application List visit the following page
 https://wiki.archlinux.org/index.php/List_of_applications
 Build on a Rolling Release model Arch Linux also provides other Linux Desktop Environments, such as KDE, GNOME, Mate, LXDE, XFCE, Enlightenment, from its official repositories , so choosing Cinnamon or other DE is just a pure simple personal choice, but, in my opinion, Cinnamon provides a better flexibility (Themes, Applets, Desklets and Extensions) against complex customizations than its parent Gnome Shell.
+
+#troubleshoot problems
+
+1 Partition error
+  a/ If you use USB boot for install Arch linux to another USB HDD. U must manual edit code in partition:
+      HDD_NAME=/dev/sdXX
+  b/ 
