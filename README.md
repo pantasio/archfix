@@ -8,35 +8,46 @@ About
 http://tuxomat.ml/my-arch-linux-instant-soup/
 
 This tutorial guides you through transforming the main Arch Linux CLI only into a powerful and robust Desktop platform, with an awesome customizable desktop environment in Linux world this days – “Cinnamon” – and all the necessary software for an average desktop user, all of this done with the help of pacman software manager which does all necessary library, dependency and configuration checks on your behalf.
-Requirements
+
+#Requirements
+
 Previous Arch Linux installation on a Desktop, Laptop or Netbook with a working Internet connection.
 Arch Linux Installation and Configuration Guide with Screenshots
+
 Step 1: Install Xorg Server and Video Drivers
+
 1. After initial system login we need to do a full system update by issuing the following command.
 $ sudo pacman –Syu
 Update Arch Linux
 Update Arch Linux
+
 2. Before we install all the necessary software’s, we need the help of a package “bash-completion“, that automatically completes commands or shows a list of possible commands by pressing TAB key.
 $ sudo pacman –S bash-completion
 Install Bash Completion
 Install Bash Completion
+
 3. The next step is to install the default X environment that provides the main Xorg server configurations and 3D support.
 $ sudo pacman -S xorg-server xorg-xinit xorg-utils xorg-server-utils mesa
 Install Xorg in Arch Linux
 Install Xorg Server
+
 4. For an extra Xorg functionality also install the following packages.
 $ sudo pacman -S xorg-twm xterm xorg-xclock
 Install Xorg Packages
 Install Xorg Packages
+
 5. For a laptop or netbook, also install drivers for touchpad input support.
 $ sudo pacman -S xf86-input-synaptics
 Install Touchpad Drivers
 Install Touchpad Drivers
+
 6. Now we need to install system VGA (Video Card) specific drivers, but first of all we need to identify our system graphics. Issue the following command to identify your video card.
 $ lspci | grep VGA
 Check Video Card in Linux
 Check Video Card
+
 If your system is a newer Laptop with Optimus support the output should show you two graphics card, usually an Intel and Nvidia or an Intel and ATI. The Linux drivers support for this kind of technology is now so brilliant at this time (you can try Bumblebee or Primus) for a minimal VGA switching.
+
 7. After you detected your Graphics, is now time to install appropriate drivers. By default, Arch offers Vesa default video driver – xf86-video-vesa – that can handle a large number of graphic chipsets but does not provide any 2D or 3D acceleration support.
 Also Arch Linux provides two types of Video Drivers.
 Open Source (maintained and developed by distribution – recommended for installation).
@@ -45,6 +56,7 @@ In order to list all available Open Source video drivers provided by Arch Linux 
 $ sudo pacman –Ss | grep xf86-video
 List Open Source Video Drivers
 List Open Source Video Drivers
+
 To list Proprietary drivers run the following commands.
 ## Nvidia ##
 $ sudo pacman –Ss | grep nvidia
@@ -60,6 +72,7 @@ List AMD/ATI Drivers
 List AMD/ATI Drivers
 List Intel Drivers
 List Intel Drivers
+
 For Multilib Packages – 32-bit applications on Arch x86_64 – use the following commands.
 ## Nvidia ##
 $ sudo pacman –Ss | grep lib32-nvidia
@@ -70,6 +83,7 @@ $ sudo pacman –Ss | grep lib32-ati
 $ sudo pacman –Ss | grep lib32-intel
 List Nvidia Drivers
 List Nvidia Drivers
+
 8. After you verify what drivers are available for your Graphics proceed with appropriate video driver package installation. As mentioned above you should stick to Open Source drivers, due to fact that they are maintained and properly tested by the community. To install Graphics Driver run the following command (after xf86-video – press TAB key to show list and autocomplete).
 $ sudo pacman  -S  xf86-video-[TAB]your_graphic_card
 Install Video Drivers in Arch Linux
