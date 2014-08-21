@@ -415,6 +415,9 @@ function partitioning() {
   echo $HDD_NAME
   get_total_hdd_size $HDD_NAME
   calc_optimal_patition_size
+  BOOT_SIZE=200
+  ROOT_SIZE=20000
+  HOME_SIZE=30000
   echo '-----------------------'
   echo 'boot: '$BOOT_SIZE ' MB'
   echo 'root: '$ROOT_SIZE ' MB'
@@ -696,31 +699,31 @@ function install_compress_tools() {
   return 0
 }
 
-function install_alsa() {
-  clear
-  echo "******************************************************"
-  echo "*********       Installing Alsa!       ***************"
-  echo "******************************************************"
-  echo ""
-  ARCH=$(uname -m)
-  install_package "powerpill" "alsa-utils alsa-plugins"
-  [[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-alsa-plugins"
-  return 0
-}
+#function install_alsa() {
+ # clear
+ # echo "******************************************************"
+ # echo "*********       Installing Alsa!       ***************"
+ # echo "******************************************************"
+ # echo ""
+ # ARCH=$(uname -m)
+  #install_package "powerpill" "alsa-utils alsa-plugins"
+  #[[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-alsa-plugins"
+  #return 0
+#}
 
-function install_pulse() {
-  clear
-  echo "******************************************************"
-  echo "*********     Installing Pulseaudio!   ***************"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  ARCH=$(uname -m)
-  install_package "powerpill" "pulseaudio pulseaudio-alsa pavucontrol"
-  [[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-libpulse"
-  echo "load-module module-switch-on-connect" >> /etc/pulse/default.pa
-  return 0
-}
+#function install_pulse() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********     Installing Pulseaudio!   ***************"
+  #echo "******************************************************"
+  #echo ""
+  #sleep 2
+  #ARCH=$(uname -m)
+  #install_package "powerpill" "pulseaudio pulseaudio-alsa pavucontrol"
+  #[[ ${ARCH} == x86_64 ]] && install_package "powerpill" "lib32-libpulse"
+  #echo "load-module module-switch-on-connect" >> /etc/pulse/default.pa
+ # return 0
+#}
 
 function install_bash_goodies() {
   clear
@@ -750,18 +753,18 @@ function user_config() {
   return 0
 }
 
-function install_avahi_deamon() {
-  clear
-  echo "******************************************************"
-  echo "*********   Installing Avahi Deamon!   ***************"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  install_package "powerpill" "avahi nss-mdns"
-  systemctl enable avahi-daemon
-  systemctl enable avahi-dnsconfd
-  return 0
-}
+#function install_avahi_deamon() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********   Installing Avahi Deamon!   ***************"
+  #echo "******************************************************"
+  #echo ""
+  #sleep 2
+  #install_package "powerpill" "avahi nss-mdns"
+  #systemctl enable avahi-daemon
+  #systemctl enable avahi-dnsconfd
+  #return 0
+#}
 
 function install_ntfs_tools() {
   clear
@@ -787,41 +790,41 @@ function install_openssh() {
   return 0
 }
 
-function readahead_on() {
-  clear
-  echo "******************************************************"
-  echo "*********      enable readahead  !     ***************"
-  echo "******************************************************"
-  echo ""
+#function readahead_on() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********      enable readahead  !     ***************"
+  #echo "******************************************************"
+  #echo ""
   
-  systemctl enable systemd-readahead-collect
-  systemctl enable systemd-readahead-replay
-  return 0
-}
+  #systemctl enable systemd-readahead-collect
+  #systemctl enable systemd-readahead-replay
+  #return 0
+#}
 
-function install_xserver() {
-  clear
-  echo "******************************************************"
-  echo "*********   Installing X Server  !     ***************"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  install_package "powerpill" "xorg-server xorg-server-utils xorg-xinit"
-  install_package "powerpill" "xf86-input-synaptics xf86-input-mouse xf86-input-keyboard"
-  install_package "powerpill" "mesa gamin"
-  localectl set-keymap ${KEYMAP}
+#function install_xserver() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********   Installing X Server  !     ***************"
+  #echo "******************************************************"
+  #echo ""
+  #sleep 2
+  #install_package "powerpill" "xorg-server xorg-server-utils xorg-xinit"
+  #install_package "powerpill" "xf86-input-synaptics xf86-input-mouse xf86-input-keyboard"
+  #install_package "powerpill" "mesa gamin"
+  #localectl set-keymap ${KEYMAP}
   
   #X Server Keyboard layout
-  CCODE=${LANGUAGE:0:2}
-  touch /etc/X11/xorg.conf.d/20-keyboard.conf
-  echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
-  echo '       Identifier "keyboard"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
-  echo '       MatchIsKeyboard "yes"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
-  echo '       Option "XkbLayout" "'$CCODE'"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
-  echo 'EndSection' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  #CCODE=${LANGUAGE:0:2}
+  #touch /etc/X11/xorg.conf.d/20-keyboard.conf
+  #echo 'Section "InputClass"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  #echo '       Identifier "keyboard"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  #echo '       MatchIsKeyboard "yes"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  #echo '       Option "XkbLayout" "'$CCODE'"' >> /etc/X11/xorg.conf.d/20-keyboard.conf
+  #echo 'EndSection' >> /etc/X11/xorg.conf.d/20-keyboard.conf
   
-  return 0
-}
+  #return 0
+#}
 
 function install_infinality_font_config() {
   clear
@@ -855,25 +858,25 @@ function install_openssh() {
   return 0
 }
 
-function install_video_driver() {
-  clear
-  echo "******************************************************"
-  echo "*********   Installing VIDEO DRIVER  ! ***************"
-  echo "******************************************************"
-  echo ""
-  ARCH=$(uname -m)
+#function install_video_driver() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********   Installing VIDEO DRIVER  ! ***************"
+  #echo "******************************************************"
+  #echo ""
+  #ARCH=$(uname -m)
   
   
-  echo "Please select your Video Card"
-  CHOISE_ARRAY[0]="NVIDIA"
-  CHOISE_ARRAY[1]="bumblebee"
-  CHOISE_ARRAY[2]="Catalyst"
-  CHOISE_ARRAY[3]="VirtualBox"
+  #echo "Please select your Video Card"
+  #CHOISE_ARRAY[0]="NVIDIA"
+  #CHOISE_ARRAY[1]="bumblebee"
+  #CHOISE_ARRAY[2]="Catalyst"
+  #CHOISE_ARRAY[3]="VirtualBox"
   
-  choise_menu
+  #choise_menu
   
-  if [ $RESULT -eq 1 ] #NVIDIA
-  then
+  #if [ $RESULT -eq 1 ] #NVIDIA
+  #then
     pacman --noconfirm -Rdds nouveau-dri
     pacman --noconfirm -Rdds mesa-libgl
     pacman --noconfirm -Rdds lib32-mesa-libgl
@@ -1003,41 +1006,41 @@ function install_lightdm() {
   return 0
 }
 
-function install_plank() {
-  clear
-  echo "******************************************************"
-  echo "*********     Installing PLANK DOCK!   ***************"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  install_package "powerpill" "plank plank-config"
-  return 0
-}
+#function install_plank() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********     Installing PLANK DOCK!   ***************"
+  #echo "******************************************************"
+  #echo ""
+  #sleep 2
+  #install_package "powerpill" "plank plank-config"
+  #return 0
+#}
 
-function install_archey() {
-  clear
-  echo "******************************************************"
-  echo "*********     Installing ArchEY!       ***************"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  install_package "yaourt" "archey"
-  return 0
-}
+#function install_archey() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********     Installing ArchEY!       ***************"
+  #echo "******************************************************"
+  #echo ""
+  #sleep 2
+  #install_package "yaourt" "archey"
+  #return 0
+#}
 
 
-function install_libreoffice() {
-  clear
-  echo "******************************************************"
-  echo "*********     Installing libreoffice!  ***************"
-  echo "******************************************************"
-  echo ""
-  sleep 2
-  CCODE=${LANGUAGE:0:2}
-  install_package "powerpill" "libreoffice-common libreoffice-calc libreoffice-writer"
-  install_package "powerpill" "libreoffice-gnome hunspell hunspell-"$CCODE" libreoffice-"$CCODE
-  return 0
-}
+#function install_libreoffice() {
+  #clear
+  #echo "******************************************************"
+  #echo "*********     Installing libreoffice!  ***************"
+  #echo "******************************************************"
+  #echo ""
+  #sleep 2
+  #CCODE=${LANGUAGE:0:2}
+  #install_package "powerpill" "libreoffice-common libreoffice-calc libreoffice-writer"
+  #install_package "powerpill" "libreoffice-gnome hunspell hunspell-"$CCODE" libreoffice-"$CCODE
+  #return 0
+#}
 
 function install_gimp() {
   clear
@@ -1047,7 +1050,7 @@ function install_gimp() {
   echo ""
   sleep 2
   CCODE=${LANGUAGE:0:2}
-  install_package "powerpill" "gimp gimp-help-"$CCODE" gimp-plugin-gmic gimp-plugin-fblur"
+  #install_package "powerpill" "gimp gimp-help-"$CCODE" gimp-plugin-gmic gimp-plugin-fblur"
   return 0
 }
 
@@ -1059,7 +1062,7 @@ function install_inkscape() {
   echo ""
   sleep 2
   CCODE=${LANGUAGE:0:2}
-  install_package "powerpill" "inkscape"
+  #install_package "powerpill" "inkscape"
   return 0
 }
 
@@ -1070,8 +1073,8 @@ function install_firewall() {
   echo "******************************************************"
   echo ""
   sleep 2
-  pacman --noconfirm -Rdds firewalld
-  install_package "powerpill" "ufw gufw"
+  #pacman --noconfirm -Rdds firewalld
+  #install_package "powerpill" "ufw gufw"
   return 0
 }
 
@@ -1082,7 +1085,7 @@ function install_gaming_stuff() {
   echo "******************************************************"
   echo ""
   sleep 2
-  install_package "powerpill" "steam playonlinux"
+  #install_package "powerpill" "steam playonlinux"
   return 0
 }
 
@@ -1093,10 +1096,10 @@ function install_extra_gtk_apps() {
   echo "******************************************************"
   echo ""
   sleep 2
-  pacman --noconfirm -Rns mousepad xfce4-taskmanager
-  install_package "powerpill" "geany geany-plugins"
-  install_package "yaourt" "geany-themes"
-  install_package "yaourt" "gnome-system-monitor-gtk2"
+  #pacman --noconfirm -Rns mousepad xfce4-taskmanager
+  #install_package "powerpill" "geany geany-plugins"
+  #install_package "yaourt" "geany-themes"
+  #install_package "yaourt" "gnome-system-monitor-gtk2"
   return 0
 }
 
@@ -1107,8 +1110,8 @@ function install_extra_qt_apps() {
   echo "******************************************************"
   echo ""
   sleep 2
-  install_package "powerpill" "qtcreator gdb"
-  install_package "powerpill" "keepassx"
+  #install_package "powerpill" "qtcreator gdb"
+  #install_package "powerpill" "keepassx"
   return 0
 }
 
@@ -1120,12 +1123,12 @@ function install_audio_tools_and_codec() {
   echo ""
   sleep 2
   #Codecs
-  install_package "powerpill" "gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gstreamer0.10 gstreamer0.10-plugins"
+  #install_package "powerpill" "gst-plugins-base gst-plugins-base-libs gst-plugins-good gst-plugins-bad gst-plugins-ugly gst-libav gstreamer0.10 gstreamer0.10-plugins"
   #Tools
-  install_package "yaourt" "spotify"
-  install_package "yaourt" "radiotray"
-  install_package "powerpill" "ffmpeg-compat"
-  return 0
+  #install_package "yaourt" "spotify"
+  #install_package "yaourt" "radiotray"
+  #install_package "powerpill" "ffmpeg-compat"
+  #return 0
 }
 
 function install_video_tools_and_codec() {
@@ -1136,9 +1139,9 @@ function install_video_tools_and_codec() {
   echo ""
   sleep 2
   #Codecs
-  package_install "libquicktime libdvdread libdvdnav libdvdcss cdrdao"
+  #package_install "libquicktime libdvdread libdvdnav libdvdcss cdrdao"
   #Tools
-  install_package "powerpill" "parole openshot"
+  #install_package "powerpill" "parole openshot"
   return 0
 }
 
@@ -1165,9 +1168,9 @@ function install_internet_tools() {
   echo "******************************************************"
   echo ""
   sleep 2
-  CCODE=${LANGUAGE:0:2}
-  install_package "yaourt" "google-chrome"
-  install_package "powerpill" "thunderbird thunderbird-i18n-"$CCODE
+  #CCODE=${LANGUAGE:0:2}
+  #install_package "yaourt" "google-chrome"
+  #install_package "powerpill" "thunderbird thunderbird-i18n-"$CCODE
   return 0
 }
 
@@ -1178,7 +1181,7 @@ function install_java() {
   echo "******************************************************"
   echo ""
   sleep 2
-  install_package "powerpill" "jre7-openjdk icedtea-web-java7"
+  #install_package "powerpill" "jre7-openjdk icedtea-web-java7"
   return 0
 }
 
