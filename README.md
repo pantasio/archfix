@@ -3,23 +3,39 @@ archfix
 
 my personal Arch Linux Installation script
 
-Sumary code
+#Sumary code
 sudo pacman –Syu
+
 sudo pacman –S bash-completion
+
 sudo pacman -S xorg-server xorg-xinit xorg-utils xorg-server-utils mesa
+
 pacman  -S  xf86-video-intel
+
 startx
+
 pacman -S cinnamon
+
 pacman –S net-tools
+
 pacman -S network-manager-applet
+
 ip link
+
 systemctl stop dhcpcd@ens33.service
+
 systemctl disable dhcpcd@ens33.service
+
 systemctl stop dhcpcd.service
+
 systemctl disable dhcpcd.service
+
 pacman –S gdm
+
 systemctl enable gdm
+
 systemctl start gdm
+
 
 About
 =====
