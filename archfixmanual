@@ -87,6 +87,7 @@ function first_choise() {
     install_openssh
     readahead_on
     install_xserver
+    install_intel_video_driver
     #install_video_driver
     install_infinality_font_config
     #install_cups
@@ -808,7 +809,8 @@ function install_xserver() {
   echo ""
   sleep 2
   install_package "powerpill" "xorg-server xorg-server-utils xorg-xinit"
-  install_package "powerpill" "xf86-input-synaptics xf86-input-mouse xf86-input-keyboard"
+  #install_package "powerpill" "xf86-input-synaptics xf86-input-mouse xf86-input-keyboard"
+  install_package "powerpill" "xf86-input-mouse xf86-input-keyboard"
   install_package "powerpill" "mesa gamin"
   localectl set-keymap ${KEYMAP}
   
@@ -855,7 +857,20 @@ function install_openssh() {
   install_package "powerpill" "openssh"
   return 0
 }
+function install_intel_video_driver() {
+  clear
+  echo "******************************************************"
+  echo "*********   Installing VIDEO DRIVER  ! ***************"
+  echo "******************************************************"
+  echo ""
+  ARCH=$(uname -m)
 
+  pacman -S xorg-server xorg-xinit xorg-utils xorg-server-utils mesa
+  pacman -S xf86-video-intel
+  pacman -S cinnamon
+  
+
+}
 function install_video_driver() {
   clear
   echo "******************************************************"
