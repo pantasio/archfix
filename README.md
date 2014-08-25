@@ -37,6 +37,8 @@ systemctl enable gdm
 systemctl start gdm
 
 
+https://wiki.archlinux.org/index.php/Maximizing_performance
+
 About
 =====
 http://tuxomat.ml/my-arch-linux-instant-soup/
