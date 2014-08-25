@@ -1182,6 +1182,6 @@ function install_java() {
   install_package "powerpill" "jre7-openjdk icedtea-web"
   return 0
 }
-
+ 
 first_choise
 
