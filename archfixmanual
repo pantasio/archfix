@@ -475,23 +475,24 @@ function install_base_manual() {
   sleep 2
   
   # Format partition
-  # mkfs.ext4 /dev/sda1
-  # mkfs.ext4 /dev/sda5
-  
+  mkfs.ext4 /dev/sda2
+  mkfs.ext4 /dev/sda6
+  mkfs.ext2 /dev/sda1
+
   #mount all patitions must care with /dev/sdaXXX
   # pls check first fdisk or lsblk 
-  mount /dev/sda? /mnt
+  mount /dev/sda2 /mnt
   mkdir /mnt/boot
   mkdir /mnt/home
-  mount /dev/sda? /mnt/boot
-  mount /dev/sda? /mnt/home
-  mkswap /dev/sda2
-  swapon /dev/sda2
+  mount /dev/sda1 /mnt/boot
+  mount /dev/sda6 /mnt/home
+  mkswap /dev/sda7
+  swapon /dev/sda7
   
   pacstrap -i /mnt base base-devel
   
-  genfstab -U -p /mnt >> /mnt/etc/fstab
-  nano /mnt/etc/fstab
+  #genfstab -U -p /mnt >> /mnt/etc/fstab
+  #nano /mnt/etc/fstab
   # make sure use UUID by blkid command
   
   
