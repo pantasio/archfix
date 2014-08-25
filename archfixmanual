@@ -70,7 +70,7 @@ function first_choise() {
     enter_hostname
     partitioning
     optimize_mirrorlist
-    install_base
+    install_base_manual
   else
     unset_menu_items
     load_configs
@@ -466,7 +466,36 @@ function partitioning() {
   unset_menu_items
   return 0
 }
-
+function install_base_manual() {
+  clear
+  echo "******************************************************"
+  echo "***************  Install Base System!  ***************"
+  echo "******************************************************"
+  echo ""
+  sleep 2
+  
+  # Format partition
+  # mkfs.ext4 /dev/sda1
+  # mkfs.ext4 /dev/sda5
+  
+  #mount all patitions must care with /dev/sdaXXX
+  # pls check first fdisk or lsblk 
+  mount /dev/sda? /mnt
+  mkdir /mnt/boot
+  mkdir /mnt/home
+  mount /dev/sda? /mnt/boot
+  mount /dev/sda? /mnt/home
+  mkswap /dev/sda2
+  swapon /dev/sda2
+  
+  pacstrap -i /mnt base base-devel
+  
+  genfstab -U -p /mnt >> /mnt/etc/fstab
+  nano /mnt/etc/fstab
+  # make sure use UUID by blkid command
+  
+  
+}
 function install_base() {
   clear
   echo "******************************************************"
