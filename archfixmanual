@@ -431,7 +431,7 @@ function partitioning() {
   # SWAP_SIZE=$(($SWAP_SIZE * 1024))
   
   #Wiping the entire disk
-  dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
+  #dd if=/dev/zero of=$HDD_NAME  bs=512  count=1
   
   # touch /tmp/fdisk.input
   # echo -e "n\np\n1\n\n+"$BOOT_SIZE"K\na\n1\nn\np\n2\n\n+"$SWAP_SIZE"K\nt\n2\n82\nn\np\n3\n\n+"$ROOT_SIZE"K\nn\np\n4\n\n+"$HOME_SIZE"K\nn\np\n5\n\nw" > /tmp/fdisk.input
@@ -442,20 +442,25 @@ function partitioning() {
   # # Remove fdisk.input file
   # rm /tmp/fdisk.input
   
-  mkfs.ext2 -L boot $HDD_NAME'1'
-  mkswap -L swap $HDD_NAME'2'
-  mkfs.ext4 -L root $HDD_NAME'3'
-  mkfs.ext4 -L home $HDD_NAME'4'
+  #mkfs.ext2 -L boot $HDD_NAME'1'
+  #mkswap -L swap $HDD_NAME'2'
+  #mkfs.ext4 -L root $HDD_NAME'3'
+  #mkfs.ext4 -L home $HDD_NAME'4'
+  
+  mkfs.ext2 -L boot /dev/sda1
+  mkswap -L swap /dev/sda?
+  mkfs.ext4 -L root /dev/sda?
+  mkfs.ext4 -L home /dev/sda?
   
   #enable swap
-  swapon $HDD_NAME'2'
+  swapon /dev/sda?
   
   #mount all patitions
-  mount $HDD_NAME'3' /mnt
+  mount /dev/sda? /mnt
   mkdir /mnt/boot
   mkdir /mnt/home
-  mount $HDD_NAME'1' /mnt/boot
-  mount $HDD_NAME'4' /mnt/home
+  mount /dev/sda? /mnt/boot
+  mount /dev/sda? /mnt/home
   
   #clean
   unset_menu_items
@@ -532,7 +537,7 @@ function install_base() {
   echo "" >> /mnt/etc/default/grub
   echo "# fix broken grub.cfg gen" >> /mnt/etc/default/grub
   echo "GRUB_DISABLE_SUBMENU=y" >> /mnt/etc/default/grub
-  arch_chroot 'grub-install --target=i386-pc --recheck --debug '${HDD_NAME}
+  arch_chroot 'grub-install --target=i386-pc --recheck --debug '/dev/sda
   arch_chroot 'grub-mkconfig -o /boot/grub/grub.cfg'
   
   #SET Root password
@@ -542,10 +547,12 @@ function install_base() {
   cd
  # No copy archfix to root 
  #cp -r archfix/ /mnt/root/
+  echo "Unmount HDD"
+  sleep 3
   
-  umount $HDD_NAME'1'
-  umount $HDD_NAME'3'
-  umount $HDD_NAME'4'
+  umount /dev/sda?
+  umount /dev/sda?
+  umount /dev/sda?
   
   reboot #<< end
   return 0
