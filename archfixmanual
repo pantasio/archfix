@@ -69,11 +69,11 @@ function first_choise() {
     dotimezone
     enter_hostname
     partitioning
+    optimize_mirrorlist
     install_base
   else
     unset_menu_items
     load_configs
-    optimize_mirrorlist
     install_yaourt
     user_config
     adduser
@@ -82,29 +82,29 @@ function first_choise() {
     install_alsa
     install_pulse
     install_bash_goodies
-    install_avahi_deamon
+    #install_avahi_deamon
     install_ntfs_tools
     install_openssh
     readahead_on
     install_xserver
-    install_video_driver
+    #install_video_driver
     install_infinality_font_config
-    install_cups
-    install_xfce
-    install_lightdm
+    #install_cups
+    #install_xfce
+    #install_lightdm
     
     #clean package cache
     pacman -Scc --noconfirm
     
-    install_plank
+    #install_plank
     install_archey
-    install_libreoffice
-    install_gimp
-    install_inkscape
-    install_firewall
-    install_gaming_stuff
-    install_extra_gtk_apps
-    install_extra_qt_apps
+    #install_libreoffice
+    #install_gimp
+    #install_inkscape
+    #install_firewall
+    #install_gaming_stuff
+    #install_extra_gtk_apps
+    #install_extra_qt_apps
     install_audio_tools_and_codec
     install_video_tools_and_codec
     
@@ -112,8 +112,8 @@ function first_choise() {
     pacman -Scc --noconfirm
     
     install_fonts
-    install_java
-    install_internet_tools
+    #install_java
+    #install_internet_tools
     
     #clean package cache
     pacman -Scc --noconfirm
@@ -539,7 +539,8 @@ function install_base() {
   
   
   cd
-  cp -r archfix/ /mnt/root/
+ # No copy archfix to root 
+ #cp -r archfix/ /mnt/root/
   
   umount $HDD_NAME'1'
   umount $HDD_NAME'3'
